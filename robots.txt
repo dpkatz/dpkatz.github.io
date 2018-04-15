@@ -1,4 +1,4 @@
-Sitemap: https://dpkatz@github.io/sitemapindex.xml
+Sitemap: https://dpkatz.github.io/sitemapindex.xml
 
 User-Agent: *
-Host: dpkatz@github.io
+Host: dpkatz.github.io
