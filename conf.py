@@ -21,7 +21,7 @@ BLOG_AUTHOR = "Dan Katz"  # (translatable)
 BLOG_TITLE = "As Simple as Possible..."
 # This is the main URL for your site. It will be used
 # in a prominent link. Don't forget the protocol (http/https)!
-SITE_URL = "https://dpkatz@github.io/"
+SITE_URL = "https://dpkatz.github.io/"
 # This is the URL where Nikola's output will be deployed.
 # If not set, defaults to SITE_URL
 # BASE_URL = "https://haskellml.com/"
