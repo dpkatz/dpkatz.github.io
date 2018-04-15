@@ -1,0 +1,21 @@
+#+BEGIN_COMMENT
+.. title: A simple beginning
+.. slug: a-simple-beginning
+.. date: 2018-04-14 16:20:56 UTC-04:00
+.. tags: blog
+.. category: 
+.. link: 
+.. description: Where to begin...
+.. type: text
+#+END_COMMENT
+
+It all started with a simple classification problem: Given a document,
+identify what company it was about.  Here are 10^6 documents we know
+how to classify, and here are 10^5 we don't.  A standard undergrad
+homework exercise in machine learning, they said.
+
+Little did I know I was headed down the rabbit hole...
+
+A year later, I feel like I'm just beginning to get my head around all
+this and I'm going to try to get it down in a form that makes some
+sense.
