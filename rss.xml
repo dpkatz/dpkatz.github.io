@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>As Simple as Possible...</title><link>https://dpkatz.github.io/</link><description>Functional Programming, Machine Learning, and anything else that catches my interest...</description><atom:link href="https://dpkatz.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:dpkatz.bc@gmail.com"&gt;Dan Katz&lt;/a&gt; </copyright><lastBuildDate>Sun, 15 Apr 2018 02:41:53 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>A simple beginning</title><link>https://dpkatz.github.io/posts/a-simple-beginning/</link><dc:creator>Dan Katz</dc:creator><description>&lt;p&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>As Simple as Possible...</title><link>https://dpkatz.github.io/</link><description>Functional Programming, Machine Learning, and anything else that catches my interest...</description><atom:link href="https://dpkatz.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:dpkatz.bc@gmail.com"&gt;Dan Katz&lt;/a&gt; </copyright><lastBuildDate>Thu, 31 May 2018 14:07:21 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>A simple beginning</title><link>https://dpkatz.github.io/posts/a-simple-beginning/</link><dc:creator>Dan Katz</dc:creator><description>&lt;p&gt;
 It all started with a simple classification problem: Given a document,
 identify what company it was about.  Here are 10&lt;sup&gt;6&lt;/sup&gt; documents we know
 how to classify, and here are 10&lt;sup&gt;5&lt;/sup&gt; we don't.  A standard undergrad
@@ -13,7 +13,7 @@ Little did I know I was headed down the rabbit hole…
 &lt;p&gt;
 A year later, I feel like I'm just beginning to get my head around all
 this and I'm going to try to get it down in a form that makes some
-sense.
+sense to me.
 &lt;/p&gt;</description><category>blog</category><guid>https://dpkatz.github.io/posts/a-simple-beginning/</guid><pubDate>Sat, 14 Apr 2018 20:20:56 GMT</pubDate></item><item><title>Welcome to Nikola</title><link>https://dpkatz.github.io/posts/welcome-to-nikola/</link><dc:creator>Roberto Alsina</dc:creator><description>&lt;div&gt;&lt;div class="figure"&gt;
 &lt;a class="reference external image-reference" href="https://farm1.staticflickr.com/138/352972944_4f9d568680_z.jpg?zz=1"&gt;&lt;img alt="Nikola Tesla Corner by nicwest, on Flickr" class="thumbnail" src="https://farm1.staticflickr.com/138/352972944_4f9d568680.jpg"&gt;&lt;/a&gt;
 &lt;/div&gt;
