@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="What HaskellGBM is all about">
+<meta name="viewport" content="width=device-width">
+<title>Using LightGBM from Haskell | Recursively Boosted</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://dpkatz.github.io/posts/using-lightgbm-from-haskell/">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><meta name="description" itemprop="description" content="What HaskellGBM is all about">
+<meta name="author" content="Dan Katz">
+<link rel="prev" href="../a-simple-beginning/" title="A simple beginning" type="text/html">
+<meta property="og:site_name" content="Recursively Boosted">
+<meta property="og:title" content="Using LightGBM from Haskell">
+<meta property="og:url" content="https://dpkatz.github.io/posts/using-lightgbm-from-haskell/">
+<meta property="og:description" content="What HaskellGBM is all about">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2018-05-31T11:22:08-04:00">
+<meta property="article:tag" content="boosting">
+<meta property="article:tag" content="Haskell">
+<meta property="article:tag" content="LightGBM">
+<meta property="article:tag" content="Machine Learning">
+</head>
+<body style="padding-top: 10px;">
+<div class="container-fluid" id="container" style="margin: 0 auto;">
+    <div class="row-fluid" id="titlerow">
+    <div class="span12" id="titlecolumn">
+    <!-- Banner-like substance -->
+        <div class="titlebox" style="text-align: right;">
+        <h1 id="blog-title" style="margin: 0; padding: 0;">
+            <a href="https://dpkatz.github.io/" title="Recursively Boosted">Recursively Boosted</a>
+        </h1>
+        
+        
+        <hr>
+</div>
+    <!-- End of banner-like substance !-->
+    <div class="row-fluid" id="contentrow">
+        <div class="span10" id="contentcolumn">
+            <!--Body content-->
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Using LightGBM from Haskell</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                    Dan Katz
+            </span></p>
+            <p class="dateline"><a href="." rel="bookmark"><time class="published dt-published" datetime="2018-05-31T11:22:08-04:00" itemprop="datePublished" title="2018-05-31 11:22">2018-05-31 11:22</time></a></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div id="outline-container-orgefbb41c" class="outline-2">
+<h2 id="orgefbb41c">Introduction</h2>
+<div class="outline-text-2" id="text-orgefbb41c">
+<p>
+One of the most popular recent approaches to tree boosting as a
+machine learning approach is <a href="https://github.com/Microsoft/LightGBM">LightGBM</a>.  It's fast, performs well on
+various sorts of regression and classification problems, and has an
+open-source implementation under active development which includes
+APIs in Python and R as well as a community-provided <a href="https://github.com/Allardvm/LightGBM.jl">Julia wrapper</a>.
+It does not, however, do anything to make life easy for the average
+Haskell programmer.  Let's change that.
+</p>
+
+<p>
+I've created a <a href="https://github.com/dpkatz/HaskellGBM">Haskell wrapper around LightGBM</a> - let's take a look
+at how to use it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgde638c1" class="outline-2">
+<h2 id="orgde638c1">How to use the library</h2>
+<div class="outline-text-2" id="text-orgde638c1">
+<p>
+We'll apply LightGBM to the venerable (now 6 years old) Kaggle problem
+of predicting <a href="https://www.kaggle.com/c/titanic">who will survive the sinking of the Titanic</a>.  The code
+and data for this exercise can be found in the <a href="https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic">GitHub repo</a>.
+</p>
+
+<p>
+<b>N.B. This article is meant to introduce you to the Haskell wrapper
+for LightGBM, not to best approaches to Kaggle competitions!</b> The
+approach taken in this article is naive in the extreme in order to
+ensure that you don't lose track of the particularly Haskellish tree
+that we care about in this machine-learning forest.  If you're looking
+for best approaches to the Titanic problem, look elsewhere.
+</p>
+</div>
+
+<div id="outline-container-org05d9695" class="outline-3">
+<h3 id="org05d9695">Data Preparation</h3>
+<div class="outline-text-3" id="text-org05d9695">
+<p>
+We start by taking the <a href="https://www.kaggle.com/c/titanic/data">Kaggle training data</a> and splitting it into two
+parts - one for training and one for validation.<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup> In the <a href="https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic">repo</a>,
+you'll find these files named <code>train_part.csv</code> and
+<code>validate_part.csv</code>.  
+</p>
+
+<p>
+Here's a sample of the first few rows of the training data:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="all" frame="border">
+<colgroup>
+<col class="org-right">
+<col class="org-right">
+<col class="org-right">
+<col class="org-left">
+<col class="org-left">
+<col class="org-right">
+<col class="org-right">
+<col class="org-right">
+<col class="org-left">
+<col class="org-right">
+<col class="org-left">
+<col class="org-left">
+</colgroup>
+<thead><tr>
+<th scope="col" class="org-right">PassengerId</th>
+<th scope="col" class="org-right">Survived</th>
+<th scope="col" class="org-right">Pclass</th>
+<th scope="col" class="org-left">Name</th>
+<th scope="col" class="org-left">Sex</th>
+<th scope="col" class="org-right">Age</th>
+<th scope="col" class="org-right">SibSp</th>
+<th scope="col" class="org-right">Parch</th>
+<th scope="col" class="org-left">Ticket</th>
+<th scope="col" class="org-right">Fare</th>
+<th scope="col" class="org-left">Cabin</th>
+<th scope="col" class="org-left">Embarked</th>
+</tr></thead>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">3</td>
+<td class="org-left">Braund, Mr. Owen Harris</td>
+<td class="org-left">male</td>
+<td class="org-right">22</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-left">A/5 21171</td>
+<td class="org-right">7.25</td>
+<td class="org-left"> </td>
+<td class="org-left">S</td>
+</tr>
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-left">Cumings, Mrs. John Bradley (Florence Briggs Thayer)</td>
+<td class="org-left">female</td>
+<td class="org-right">38</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-left">PC 17599</td>
+<td class="org-right">71.2833</td>
+<td class="org-left">C85</td>
+<td class="org-left">C</td>
+</tr>
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">1</td>
+<td class="org-right">3</td>
+<td class="org-left">Heikkinen, Miss. Laina</td>
+<td class="org-left">female</td>
+<td class="org-right">26</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-left">STON/O2. 3101282</td>
+<td class="org-right">7.925</td>
+<td class="org-left"> </td>
+<td class="org-left">S</td>
+</tr>
+</tbody>
+</table>
+<p>
+The next step is to note that LightGBM requires that categorical
+features be encoded as integer values, so we'll need to convert some
+of the columns (e.g. <code>Sex</code>, <code>Embarked</code>) into integers.  In my case, I
+wrote some code using Haskell's <a href="http://hackage.haskell.org/package/cassava">Cassava CSV library</a> to do the
+conversion,<sup><a id="fnr.2" class="footref" href="#fn.2">2</a></sup> but any approach you want to use is fine.
+</p>
+
+<p>
+We should also get rid of any columns which will induce spurious
+correlations or which have so little data that we can't use them.  In
+our case, that would include <code>Name</code>, and <code>Ticket</code> for probable
+irrelevance, and <code>Cabin</code> for lack of a reasonable amount of
+data.<sup><a id="fnr.3" class="footref" href="#fn.3">3</a></sup> We end up with a filtered dataset that looks like this:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="all" frame="border">
+<colgroup>
+<col class="org-right">
+<col class="org-right">
+<col class="org-right">
+<col class="org-right">
+<col class="org-right">
+<col class="org-right">
+<col class="org-right">
+<col class="org-right">
+<col class="org-right">
+</colgroup>
+<thead><tr>
+<th scope="col" class="org-right">Survived</th>
+<th scope="col" class="org-right">PassengerId</th>
+<th scope="col" class="org-right">Pclass</th>
+<th scope="col" class="org-right">Sex</th>
+<th scope="col" class="org-right">Age</th>
+<th scope="col" class="org-right">SibSp</th>
+<th scope="col" class="org-right">Parch</th>
+<th scope="col" class="org-right">Fare</th>
+<th scope="col" class="org-right">Embarked</th>
+</tr></thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">3</td>
+<td class="org-right">1</td>
+<td class="org-right">22.0</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">7.25</td>
+<td class="org-right">2</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">2</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">38.0</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">71.2833</td>
+<td class="org-right">0</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">3</td>
+<td class="org-right">3</td>
+<td class="org-right">0</td>
+<td class="org-right">26.0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">7.925</td>
+<td class="org-right">2</td>
+</tr>
+</tbody>
+</table>
+<p>
+Note that our dependent variable (a.k.a. what we're trying to predict)
+is in the 0th column - this is the default data format expected by
+LightGBM.  
+</p>
+
+<p>
+Also note that we still have the <code>PassengerId</code> field, even though
+that's in no way relevant to the problem.  We keep it around since the
+final submission file format for Kaggle asks for it.  To keep it from
+influencing the learning algorithm, we'll use a parameter to ask
+LightGBM to ignore it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7c31bb3" class="outline-3">
+<h3 id="org7c31bb3">Training the booster</h3>
+<div class="outline-text-3" id="text-org7c31bb3">
+<p>
+Training the booster is pretty straightforward - feed the training
+data into the training algorithm, give a few hyperparameters, and let
+it rip.  The gory details are in the <a href="https://github.com/dpkatz/HaskellGBM/blob/master/examples/titanic/Main.hs">example code</a>, but here are the
+highlights.  
+</p>
+</div>
+
+<div id="outline-container-org236efbe" class="outline-4">
+<h4 id="org236efbe">Imports</h4>
+<div class="outline-text-4" id="text-org236efbe">
+<p>
+First, some imports to get the LightGBM library and CSV filtering
+logic:
+</p>
+<div class="highlight"><pre><span></span><span class="kr">import</span> <span class="k">qualified</span> <span class="nn">LightGBM</span> <span class="k">as</span> <span class="n">LGBM</span>
+<span class="kr">import</span> <span class="k">qualified</span> <span class="nn">LightGBM.Parameters</span> <span class="k">as</span> <span class="n">P</span>
+<span class="kr">import</span>           <span class="nn">ConvertData</span> <span class="p">(</span><span class="nf">csvFilter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org15077f3" class="outline-4">
+<h4 id="org15077f3">Training Parameters</h4>
+<div class="outline-text-4" id="text-org15077f3">
+<p>
+Next, the parameters that control the training of the booster:
+</p>
+<div class="highlight"><pre><span></span><span class="nf">trainParams</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">P</span><span class="o">.</span><span class="kt">Param</span><span class="p">]</span>
+<span class="nf">trainParams</span> <span class="ow">=</span>
+  <span class="p">[</span> <span class="kt">P</span><span class="o">.</span><span class="kt">App</span> <span class="kt">P</span><span class="o">.</span><span class="kt">Binary</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">Metric</span> <span class="p">[</span><span class="kt">P</span><span class="o">.</span><span class="kt">BinaryLogloss</span><span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">AUC</span><span class="p">]</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">TrainingMetric</span> <span class="kt">True</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">LearningRate</span> <span class="mf">0.1</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">NumLeaves</span> <span class="mi">63</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">FeatureFraction</span> <span class="o">$$</span><span class="p">(</span><span class="n">refineTH</span> <span class="mf">0.8</span><span class="p">)</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">BaggingFreq</span> <span class="o">$$</span><span class="p">(</span><span class="n">refineTH</span> <span class="mi">5</span><span class="p">)</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">BaggingFraction</span> <span class="o">$$</span><span class="p">(</span><span class="n">refineTH</span> <span class="mf">0.8</span><span class="p">)</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">MinDataInLeaf</span> <span class="mi">50</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">MinSumHessianInLeaf</span> <span class="mf">5.0</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">IsSparse</span> <span class="kt">True</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">LabelColumn</span> <span class="o">$</span> <span class="kt">P</span><span class="o">.</span><span class="kt">ColName</span> <span class="s">"Survived"</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">IgnoreColumns</span> <span class="p">[</span><span class="kt">P</span><span class="o">.</span><span class="kt">ColName</span> <span class="s">"PassengerId"</span><span class="p">]</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">CategoricalFeatures</span>
+      <span class="p">[</span><span class="kt">P</span><span class="o">.</span><span class="kt">ColName</span> <span class="s">"Pclass"</span><span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">ColName</span> <span class="s">"Sex"</span><span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">ColName</span> <span class="s">"Embarked"</span><span class="p">]</span>
+  <span class="p">]</span>
+<span class="p">]</span>
+</pre></div>
+<p>
+There are several things to note here:  
+</p>
+<ul class="org-ul">
+<li>I use the <a href="https://hackage.haskell.org/package/refined">refined</a> library to limit some of the parameters to their
+proper domains.  For example, the <code>FeatureFraction</code> should be in
+the range \([0, 1]\), and by using a refined type I can ensure that
+it's so at compile time (at the expense of enabling the
+<code>TemplateHaskell</code> language extension).</li>
+<li>LightGBM multi-parameters are converted into lists (e.g. the
+<code>Metric</code> parameter)</li>
+<li>LightGBM enumerated parameters are turned into equivalent sum
+types (e.g. the <code>App</code> parameter)</li>
+<li>Column selection is based on a sum type rather than a string
+prefix (e.g. in the <code>LabelColumn</code> parameter)</li>
+<li>We can select which column contains the "labels" (the dependent
+quantity being predicted) with the <code>LabelColumn</code> parameter</li>
+<li>We can ignore some columns that we might be carrying along just
+for reporting purposes using the <code>IgnoreColumns</code> parameter</li>
+<li>Categorical features are encoded as integers, so we have to signal
+explicitly to LightGBM whether a feature is categorical (i.e. it's
+just an enum of a finite set of values) or not (i.e. it's an
+numerical value of some sort).  We do this with the
+<code>CategoricalFeatures</code> paremeter.</li>
+</ul>
+<p>
+More generally, note that the parameters module does some parameter
+bundling to ensure that nonsensical combinations of parameters don't
+occur.  For instance, the <code>NumClasses</code> parameter can only be set with
+the <code>MultiClass</code> application.  This is a break from the flat parameter
+space of the underlying LightGBM library where ensuring parameter
+coherence is up to the user.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge0759e8" class="outline-4">
+<h4 id="orge0759e8">Loading Data</h4>
+<div class="outline-text-4" id="text-orge0759e8">
+<p>
+The library provides a simple interface to load data from a CSV file
+with an optional header into a <code>DataSet</code> for use with the algorithm.
+In our case, all of the files have headers so a simple helper function
+is in order.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">loadData</span> <span class="ow">::</span> <span class="kt">FilePath</span> <span class="ow">-&gt;</span> <span class="kt">LGBM</span><span class="o">.</span><span class="kt">DataSet</span>
+<span class="nf">loadData</span> <span class="ow">=</span> <span class="kt">LGBM</span><span class="o">.</span><span class="n">loadDataFromFile</span> <span class="p">(</span><span class="kt">LGBM</span><span class="o">.</span><span class="kt">HasHeader</span> <span class="kt">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org8f26118" class="outline-4">
+<h4 id="org8f26118">Training</h4>
+<div class="outline-text-4" id="text-org8f26118">
+<p>
+I create a couple of temporary files to hold the filtered data (I'm
+doing the filtering inline - I could also have filtered the data
+out-of-band, saved them, and then fed them in directly).
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">trainModel</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="kt">LGBM</span><span class="o">.</span><span class="kt">Model</span>
+<span class="nf">trainModel</span> <span class="ow">=</span>
+  <span class="kt">TMP</span><span class="o">.</span><span class="n">withSystemTempFile</span> <span class="s">"filtered_train"</span> <span class="o">$</span> <span class="nf">\</span><span class="n">trainFile</span> <span class="n">trainHandle</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+    <span class="kr">_</span> <span class="ow">&lt;-</span> <span class="n">csvFilter</span> <span class="s">"train_part.csv"</span> <span class="n">trainHandle</span>
+    <span class="n">hClose</span> <span class="n">trainHandle</span>
+    <span class="kt">TMP</span><span class="o">.</span><span class="n">withSystemTempFile</span> <span class="s">"filtered_val"</span> <span class="o">$</span> <span class="nf">\</span><span class="n">valFile</span> <span class="n">valHandle</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+      <span class="kr">_</span> <span class="ow">&lt;-</span> <span class="n">csvFilter</span> <span class="s">"validate_part.csv"</span> <span class="n">valHandle</span>
+      <span class="n">hClose</span> <span class="n">valHandle</span>
+      <span class="kr">let</span> <span class="n">trainingData</span> <span class="ow">=</span> <span class="n">loadData</span> <span class="n">trainFile</span>
+	  <span class="n">validationData</span> <span class="ow">=</span> <span class="n">loadData</span> <span class="n">valFile</span>
+	  <span class="n">predictionFile</span> <span class="ow">=</span> <span class="s">"LightGBM_predict_result.txt"</span>
+	  <span class="n">modelName</span> <span class="ow">=</span> <span class="s">"LightGBM_model.txt"</span>
+      <span class="n">model</span> <span class="ow">&lt;-</span>
+	<span class="kt">LGBM</span><span class="o">.</span><span class="n">trainNewModel</span> <span class="n">modelName</span> <span class="n">trainParams</span> <span class="n">trainingData</span> <span class="n">validationData</span> <span class="mi">100</span>
+      <span class="kr">case</span> <span class="n">model</span> <span class="kr">of</span>
+	<span class="kt">Left</span> <span class="n">e</span> <span class="ow">-&gt;</span> <span class="ne">error</span> <span class="o">$</span> <span class="s">"Error training model:  "</span> <span class="o">++</span> <span class="n">show</span> <span class="n">e</span>
+	<span class="kt">Right</span> <span class="n">m</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+	  <span class="n">print</span> <span class="o">$</span> <span class="s">"Model trained and saved to file:  "</span> <span class="o">++</span> <span class="n">modelName</span>
+	  <span class="c1">-- [... a bit of self validation code elided here ...]</span>
+	  <span class="n">return</span> <span class="n">m</span>
+</pre></div>
+
+<p>
+Note how we use the training data and the validation data in the the
+training cycle.
+</p>
+
+<p>
+The effect of this code is to train a model, write the model out to
+the <code>modelName</code> file for future use, and return the model for
+immediate use (or return an error-log in case there was an error
+during training).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org81c8e6d" class="outline-4">
+<h4 id="org81c8e6d">Predicting</h4>
+<div class="outline-text-4" id="text-org81c8e6d">
+<p>
+Now that we have the model, we can use it to predict the fate of other
+passengers.  Here we go:
+</p>
+<div class="highlight"><pre><span></span><span class="nf">main</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
+  <span class="n">cwd</span> <span class="ow">&lt;-</span> <span class="kt">SD</span><span class="o">.</span><span class="n">getCurrentDirectory</span>
+  <span class="kt">SD</span><span class="o">.</span><span class="n">withCurrentDirectory</span>
+    <span class="p">(</span><span class="n">cwd</span> <span class="o">&lt;/&gt;</span> <span class="s">"examples"</span> <span class="o">&lt;/&gt;</span> <span class="s">"titanic"</span><span class="p">)</span>
+    <span class="p">(</span><span class="kr">do</span>
+	<span class="n">m</span> <span class="ow">&lt;-</span> <span class="n">trainModel</span>
+
+	<span class="kt">TMP</span><span class="o">.</span><span class="n">withSystemTempFile</span> <span class="s">"filtered_test"</span> <span class="o">$</span> <span class="nf">\</span><span class="n">testFile</span> <span class="n">testHandle</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+	  <span class="kr">_</span> <span class="ow">&lt;-</span> <span class="n">testFilter</span> <span class="s">"test.csv"</span> <span class="n">testHandle</span>
+	  <span class="n">hClose</span> <span class="n">testHandle</span>
+	  <span class="kt">TMP</span><span class="o">.</span><span class="n">withSystemTempFile</span> <span class="s">"predictions"</span> <span class="o">$</span> <span class="nf">\</span><span class="n">predFile</span> <span class="n">predHandle</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+	    <span class="n">hClose</span> <span class="n">predHandle</span>
+	    <span class="kr">_</span> <span class="ow">&lt;-</span> <span class="kt">LGBM</span><span class="o">.</span><span class="n">predict</span> <span class="n">m</span> <span class="p">(</span><span class="n">loadData</span> <span class="n">testFile</span><span class="p">)</span> <span class="n">predFile</span>
+
+	  <span class="c1">-- [... some code to report the output in Kaggle format elided ...]</span>
+    <span class="p">)</span>
+</pre></div>
+<p>
+The model output will go to the <code>predFile</code> where it can be used for
+further processing (e.g. massaging into the proper format for
+submitting to Kaggle.).
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6a6cfb4" class="outline-2">
+<h2 id="org6a6cfb4">Caveats</h2>
+<div class="outline-text-2" id="text-org6a6cfb4">
+<p>
+This interface to the LightGBM library is fundamentally a wrapper
+around the command-line interface to LightGBM, which makes it rather
+heavily embedded in the <code>IO</code> type and heavily dependent on the file
+system.  The file system dependence is not particularly bad - data
+sets and models in the machine learning space are typically large
+enough that you'd want to have them persisted to disk anyway - but it
+does give an odd feel to the wrapper API.  Most wrappers around
+LightGBM use foreign function calls to the C API and pass data
+structures in directly (e.g. as Pandas or R data frames); I might do
+something like that in the future if it looks like it would help
+matters.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1cda738" class="outline-2">
+<h2 id="org1cda738">Future directions?</h2>
+<div class="outline-text-2" id="text-org1cda738">
+<p>
+The wrapper presented here is still very rudimentary, and many tools
+could be added to it.  For example:
+</p>
+<ul class="org-ul">
+<li>Grid search for parameter tuning</li>
+<li>Cross-validation support</li>
+<li>Better validation metrics</li>
+<li>Using the C API via the Haskell FFI rather than wrapping the
+command line interface</li>
+</ul>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef">
+<sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup><div class="footpara"><p class="footpara">
+This "holdout" approach is not a particularly good validation
+method, but it's simple to implement.  Some high-level interfaces to
+LightGBM provide support for cross-validation, and I might supply that
+too eventually.
+</p></div>
+</div>
+
+<div class="footdef">
+<sup><a id="fn.2" class="footnum" href="#fnr.2">2</a></sup><div class="footpara"><p class="footpara">
+Take a look at <code>ConvertData.hs</code> in the <a href="https://github.com/dpkatz/HaskellGBM/blob/master/examples/titanic/ConvertData.hs">repo</a> if you're
+interested.
+</p></div>
+</div>
+
+<div class="footdef">
+<sup><a id="fn.3" class="footnum" href="#fnr.3">3</a></sup><div class="footpara"><p class="footpara">
+I leave open the possibility of engineering features on the
+basis of these columns (e.g. using titles from names as a proxy for
+social class, or correlating cabin numbers to particular locations on
+the ship); I'm just saying that leaving these columns as they are
+doesn't give us any useful information for a feature.
+</p></div>
+</div>
+
+
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/boosting/" rel="tag">boosting</a></li>
+            <li><a class="tag p-category" href="../../categories/haskell/" rel="tag">Haskell</a></li>
+            <li><a class="tag p-category" href="../../categories/lightgbm/" rel="tag">LightGBM</a></li>
+            <li><a class="tag p-category" href="../../categories/machine-learning/" rel="tag">Machine Learning</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../a-simple-beginning/" rel="prev" title="A simple beginning">Previous post</a>
+            </li>
+        </ul></nav></aside></article><!--End of body content--><hr>
+<div class="footerbox">
+                Contents © 2018         <a href="mailto:dpkatz.bc@gmail.com">Dan Katz</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+                
+            </div>
+        </div>
+        <div class="span2" id="sidebar">
+            <!--Sidebar content-->
+            <ul class="unstyled">
+<li>
+            
+                <li>
+<a href="../../archive.html">Archive</a>
+                </li>
+<li>
+<a href="../../categories/">Tags</a>
+                </li>
+<li>
+<a href="../../rss.xml">RSS feed</a>
+
+            </li>
+<li>
+            
+            
+            </ul>
+<!--End of sidebar content-->
+</div>
+    </div>
+    </div>
+    </div>
+</div>
+
+            <script src="../../assets/js/all-nocdn.js"></script><script>jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
+</body>
+</html>

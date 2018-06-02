@@ -6,47 +6,43 @@
     xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
-  <loc>https://dpkatz.github.io/authors/dan-katz.xml</loc>
-  <lastmod>2018-05-31T14:07:00Z</lastmod>
- </sitemap>
- <sitemap>
-  <loc>https://dpkatz.github.io/authors/roberto-alsina.xml</loc>
-  <lastmod>2018-05-31T14:07:00Z</lastmod>
- </sitemap>
- <sitemap>
   <loc>https://dpkatz.github.io/categories/blog.xml</loc>
-  <lastmod>2018-05-31T14:07:00Z</lastmod>
+  <lastmod>2018-06-02T03:32:00Z</lastmod>
  </sitemap>
  <sitemap>
-  <loc>https://dpkatz.github.io/categories/cat_nikola.xml</loc>
-  <lastmod>2018-05-31T14:07:00Z</lastmod>
+  <loc>https://dpkatz.github.io/categories/boosting.xml</loc>
+  <lastmod>2018-06-02T03:39:00Z</lastmod>
  </sitemap>
  <sitemap>
-  <loc>https://dpkatz.github.io/categories/demo.xml</loc>
-  <lastmod>2018-05-31T14:07:00Z</lastmod>
+  <loc>https://dpkatz.github.io/categories/haskell-lightgbm.xml</loc>
+  <lastmod>2018-06-02T03:23:00Z</lastmod>
  </sitemap>
  <sitemap>
-  <loc>https://dpkatz.github.io/categories/nikola.xml</loc>
-  <lastmod>2018-05-31T14:07:00Z</lastmod>
+  <loc>https://dpkatz.github.io/categories/haskell.xml</loc>
+  <lastmod>2018-06-02T03:39:00Z</lastmod>
  </sitemap>
  <sitemap>
-  <loc>https://dpkatz.github.io/categories/python.xml</loc>
-  <lastmod>2018-05-31T14:07:00Z</lastmod>
+  <loc>https://dpkatz.github.io/categories/lightgbm.xml</loc>
+  <lastmod>2018-06-02T03:39:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://dpkatz.github.io/categories/machine-learning.xml</loc>
+  <lastmod>2018-06-02T03:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://dpkatz.github.io/galleries/demo/rss.xml</loc>
-  <lastmod>2018-05-31T14:07:00Z</lastmod>
+  <lastmod>2018-06-02T03:32:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://dpkatz.github.io/galleries/rss.xml</loc>
-  <lastmod>2018-05-31T14:07:00Z</lastmod>
+  <lastmod>2018-06-02T03:32:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://dpkatz.github.io/rss.xml</loc>
-  <lastmod>2018-05-31T14:07:00Z</lastmod>
+  <lastmod>2018-06-02T03:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://dpkatz.github.io/sitemap.xml</loc>
-  <lastmod>2018-05-31T14:07:00Z</lastmod>
+  <lastmod>2018-06-02T03:39:00Z</lastmod>
  </sitemap>
 </sitemapindex>
