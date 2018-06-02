@@ -237,6 +237,7 @@ matters.
 * Future directions?
 The wrapper presented here is still very rudimentary, and many tools
 could be added to it.  For example:
+  - Add the library to Hackage
   - Grid search for parameter tuning
   - Cross-validation support
   - Better validation metrics

@@ -42,9 +42,9 @@
             <p class="dateline"><a href="posts/using-lightgbm-from-haskell/" rel="bookmark"><time class="published dt-published" datetime="2018-05-31T11:22:08-04:00" title="2018-05-31 11:22">2018-05-31 11:22</time></a></p>
         </div>
     </header><div class="e-content entry-content">
-    <div id="outline-container-orgefbb41c" class="outline-2">
-<h2 id="orgefbb41c">Introduction</h2>
-<div class="outline-text-2" id="text-orgefbb41c">
+    <div id="outline-container-orgeda7d83" class="outline-2">
+<h2 id="orgeda7d83">Introduction</h2>
+<div class="outline-text-2" id="text-orgeda7d83">
 <p>
 One of the most popular recent approaches to tree boosting as a
 machine learning approach is <a href="https://github.com/Microsoft/LightGBM">LightGBM</a>.  It's fast, performs well on
@@ -62,9 +62,9 @@ at how to use it.
 </div>
 </div>
 
-<div id="outline-container-orgde638c1" class="outline-2">
-<h2 id="orgde638c1">How to use the library</h2>
-<div class="outline-text-2" id="text-orgde638c1">
+<div id="outline-container-org1b8436e" class="outline-2">
+<h2 id="org1b8436e">How to use the library</h2>
+<div class="outline-text-2" id="text-org1b8436e">
 <p>
 We'll apply LightGBM to the venerable (now 6 years old) Kaggle problem
 of predicting <a href="https://www.kaggle.com/c/titanic">who will survive the sinking of the Titanic</a>.  The code
@@ -81,9 +81,9 @@ for best approaches to the Titanic problem, look elsewhere.
 </p>
 </div>
 
-<div id="outline-container-org05d9695" class="outline-3">
-<h3 id="org05d9695">Data Preparation</h3>
-<div class="outline-text-3" id="text-org05d9695">
+<div id="outline-container-orgd32c602" class="outline-3">
+<h3 id="orgd32c602">Data Preparation</h3>
+<div class="outline-text-3" id="text-orgd32c602">
 <p>
 We start by taking the <a href="https://www.kaggle.com/c/titanic/data">Kaggle training data</a> and splitting it into two
 parts - one for training and one for validation.<sup><a id="fnr.1" class="footref" href="posts/using-lightgbm-from-haskell/#fn.1">1</a></sup> In the <a href="https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic">repo</a>,
@@ -259,9 +259,9 @@ LightGBM to ignore it.
 </div>
 </div>
 
-<div id="outline-container-org7c31bb3" class="outline-3">
-<h3 id="org7c31bb3">Training the booster</h3>
-<div class="outline-text-3" id="text-org7c31bb3">
+<div id="outline-container-orgc1dcaa9" class="outline-3">
+<h3 id="orgc1dcaa9">Training the booster</h3>
+<div class="outline-text-3" id="text-orgc1dcaa9">
 <p>
 Training the booster is pretty straightforward - feed the training
 data into the training algorithm, give a few hyperparameters, and let
@@ -270,9 +270,9 @@ highlights.
 </p>
 </div>
 
-<div id="outline-container-org236efbe" class="outline-4">
-<h4 id="org236efbe">Imports</h4>
-<div class="outline-text-4" id="text-org236efbe">
+<div id="outline-container-org8b75d41" class="outline-4">
+<h4 id="org8b75d41">Imports</h4>
+<div class="outline-text-4" id="text-org8b75d41">
 <p>
 First, some imports to get the LightGBM library and CSV filtering
 logic:
@@ -284,9 +284,9 @@ logic:
 </div>
 </div>
 
-<div id="outline-container-org15077f3" class="outline-4">
-<h4 id="org15077f3">Training Parameters</h4>
-<div class="outline-text-4" id="text-org15077f3">
+<div id="outline-container-orga8e6fe6" class="outline-4">
+<h4 id="orga8e6fe6">Training Parameters</h4>
+<div class="outline-text-4" id="text-orga8e6fe6">
 <p>
 Next, the parameters that control the training of the booster:
 </p>
@@ -346,9 +346,9 @@ coherence is up to the user.
 </div>
 </div>
 
-<div id="outline-container-orge0759e8" class="outline-4">
-<h4 id="orge0759e8">Loading Data</h4>
-<div class="outline-text-4" id="text-orge0759e8">
+<div id="outline-container-org646979c" class="outline-4">
+<h4 id="org646979c">Loading Data</h4>
+<div class="outline-text-4" id="text-org646979c">
 <p>
 The library provides a simple interface to load data from a CSV file
 with an optional header into a <code>DataSet</code> for use with the algorithm.
@@ -362,9 +362,9 @@ is in order.
 </div>
 </div>
 
-<div id="outline-container-org8f26118" class="outline-4">
-<h4 id="org8f26118">Training</h4>
-<div class="outline-text-4" id="text-org8f26118">
+<div id="outline-container-orgf2a9ced" class="outline-4">
+<h4 id="orgf2a9ced">Training</h4>
+<div class="outline-text-4" id="text-orgf2a9ced">
 <p>
 I create a couple of temporary files to hold the filtered data (I'm
 doing the filtering inline - I could also have filtered the data
@@ -407,9 +407,9 @@ during training).
 </div>
 </div>
 
-<div id="outline-container-org81c8e6d" class="outline-4">
-<h4 id="org81c8e6d">Predicting</h4>
-<div class="outline-text-4" id="text-org81c8e6d">
+<div id="outline-container-orge684af8" class="outline-4">
+<h4 id="orge684af8">Predicting</h4>
+<div class="outline-text-4" id="text-orge684af8">
 <p>
 Now that we have the model, we can use it to predict the fate of other
 passengers.  Here we go:
@@ -442,9 +442,9 @@ submitting to Kaggle.).
 </div>
 </div>
 
-<div id="outline-container-org6a6cfb4" class="outline-2">
-<h2 id="org6a6cfb4">Caveats</h2>
-<div class="outline-text-2" id="text-org6a6cfb4">
+<div id="outline-container-org087b3b9" class="outline-2">
+<h2 id="org087b3b9">Caveats</h2>
+<div class="outline-text-2" id="text-org087b3b9">
 <p>
 This interface to the LightGBM library is fundamentally a wrapper
 around the command-line interface to LightGBM, which makes it rather
@@ -461,14 +461,15 @@ matters.
 </div>
 </div>
 
-<div id="outline-container-org1cda738" class="outline-2">
-<h2 id="org1cda738">Future directions?</h2>
-<div class="outline-text-2" id="text-org1cda738">
+<div id="outline-container-orge827e04" class="outline-2">
+<h2 id="orge827e04">Future directions?</h2>
+<div class="outline-text-2" id="text-orge827e04">
 <p>
 The wrapper presented here is still very rudimentary, and many tools
 could be added to it.  For example:
 </p>
 <ul class="org-ul">
+<li>Add the library to Hackage</li>
 <li>Grid search for parameter tuning</li>
 <li>Cross-validation support</li>
 <li>Better validation metrics</li>
