@@ -243,6 +243,10 @@ could be added to it.  For example:
   - Better validation metrics
   - Using the C API via the Haskell FFI rather than wrapping the
     command line interface
+  - Provide a [[http://hackage.haskell.org/package/Frames][data frame]] interface to DataSet allowing us to use a
+    data frame as input and extract a dataframe as output.  Similarly,
+    write a generic =DataSet -> IO FilePath= method of persisting a
+    DataSet to a file.
 
 * Footnotes
 
