@@ -55,7 +55,7 @@ conversion,[fn:2] but any approach you want to use is fine.
 
 We should also get rid of any columns which will induce spurious
 correlations or which have so little data that we can't use them.  In
-our case, that would include ~Name~, and ~Ticket~ for probable
+our case, that would include ~Name~ and ~Ticket~ for probable
 irrelevance, and ~Cabin~ for lack of a reasonable amount of
 data.[fn:3] We end up with a filtered dataset that looks like this:
 
@@ -88,6 +88,7 @@ First, some imports to get the LightGBM library and CSV filtering
 logic:
 #+BEGIN_SRC haskell
 import qualified LightGBM as LGBM
+import qualified LightGBM.DataSet as DS
 import qualified LightGBM.Parameters as P
 import           ConvertData (csvFilter)
 #+END_SRC
@@ -123,18 +124,19 @@ There are several things to note here:
     it's so at compile time (at the expense of enabling the
     =TemplateHaskell= language extension).
   - LightGBM multi-parameters are converted into lists (e.g. the
-    =Metric= parameter)
+    =Metric= parameter).
   - LightGBM enumerated parameters are turned into equivalent sum
-    types (e.g. the =App= parameter)
+    types (e.g. the =App= parameter).
   - Column selection is based on a sum type rather than a string
-    prefix (e.g. in the =LabelColumn= parameter)
+    prefix as is done in the standard LightGBM parameters (e.g. in the
+    =LabelColumn= parameter).
   - We can select which column contains the "labels" (the dependent
-    quantity being predicted) with the =LabelColumn= parameter
+    quantity being predicted) with the =LabelColumn= parameter.
   - We can ignore some columns that we might be carrying along just
-    for reporting purposes using the =IgnoreColumns= parameter
+    for reporting purposes using the =IgnoreColumns= parameter.
   - Categorical features are encoded as integers, so we have to signal
     explicitly to LightGBM whether a feature is categorical (i.e. it's
-    just an enum of a finite set of values) or not (i.e. it's an
+    just an enum of a finite set of values) or not (i.e. it's a
     numerical value of some sort).  We do this with the
     =CategoricalFeatures= paremeter.
 
@@ -153,8 +155,8 @@ In our case, all of the files have headers so a simple helper function
 is in order.
 
 #+BEGIN_SRC haskell
-loadData :: FilePath -> LGBM.DataSet
-loadData = LGBM.loadDataFromFile (LGBM.HasHeader True)
+loadData :: FilePath -> DS.DataSet
+loadData = DS.readCsvFile (DS.HasHeader True)
 #+END_SRC
 
 *** Training
@@ -212,7 +214,8 @@ main = do
           hClose testHandle
           TMP.withSystemTempFile "predictions" $ \predFile predHandle -> do
             hClose predHandle
-            _ <- LGBM.predict m (loadData testFile) predFile
+            _ <- LGBM.writeCsvFile predFile =<<
+                 LGBM.predict m (loadData testFile)
 
           -- [... some code to report the output in Kaggle format elided ...]
     )
@@ -228,15 +231,15 @@ heavily embedded in the =IO= type and heavily dependent on the file
 system.  The file system dependence is not particularly bad - data
 sets and models in the machine learning space are typically large
 enough that you'd want to have them persisted to disk anyway - but it
-does give an odd feel to the wrapper API.  Most wrappers around
+perhaps gives an odd feel to the wrapper API.  Most wrappers around
 LightGBM use foreign function calls to the C API and pass data
 structures in directly (e.g. as Pandas or R data frames); I might do
 something like that in the future if it looks like it would help
 matters.
 
 * Future directions?
-The wrapper presented here is still very rudimentary, and many tools
-could be added to it.  For example:
+The wrapper presented here is still very rudimentary, and many
+improvements should be made.  For example:
   - Add the library to Hackage
   - Grid search for parameter tuning
   - Cross-validation support
@@ -244,9 +247,7 @@ could be added to it.  For example:
   - Using the C API via the Haskell FFI rather than wrapping the
     command line interface
   - Provide a [[http://hackage.haskell.org/package/Frames][data frame]] interface to DataSet allowing us to use a
-    data frame as input and extract a dataframe as output.  Similarly,
-    write a generic =DataSet -> IO FilePath= method of persisting a
-    DataSet to a file.
+    data frame directly as input and extract a dataframe as output.
 
 * Footnotes
 
