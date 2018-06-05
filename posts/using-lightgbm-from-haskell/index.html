@@ -54,9 +54,22 @@
         
 
     </header><div class="e-content entry-content" itemprop="articleBody text">
-    <div id="outline-container-orgb616d6a" class="outline-2">
-<h2 id="orgb616d6a">Introduction</h2>
-<div class="outline-text-2" id="text-orgb616d6a">
+    <div id="outline-container-org4799ccc" class="outline-2">
+<h2 id="org4799ccc">Summary</h2>
+<div class="outline-text-2" id="text-org4799ccc">
+<blockquote>
+<ul class="org-ul">
+<li>Easily run LightGBM from Haskell</li>
+<li>Improved parameter value safety thanks to refined types</li>
+<li>Improved parameter grouping safety thanks to algebraic data types</li>
+</ul>
+</blockquote>
+</div>
+</div>
+
+<div id="outline-container-orga631d18" class="outline-2">
+<h2 id="orga631d18">Introduction</h2>
+<div class="outline-text-2" id="text-orga631d18">
 <p>
 One of the most popular recent approaches to tree boosting as a
 machine learning approach is <a href="https://github.com/Microsoft/LightGBM">LightGBM</a>.  It's fast, performs well on
@@ -68,37 +81,52 @@ Haskell programmer.  Let's change that.
 </p>
 
 <p>
-I've created a <a href="https://github.com/dpkatz/HaskellGBM">Haskell wrapper around LightGBM</a> - let's take a look
-at how to use it.
+I've created a <a href="https://github.com/dpkatz/HaskellGBM">Haskell wrapper around LightGBM</a> which makes it easy to
+call the library from a Haskell program.  Beyond simply making it
+possible to use LightGBM from Haskell, however, I've tried to make
+this interface to the library relatively safe.  In partcular:
 </p>
-</div>
-</div>
-
-<div id="outline-container-orge76ab49" class="outline-2">
-<h2 id="orge76ab49">How to use the library</h2>
-<div class="outline-text-2" id="text-orge76ab49">
+<ul class="org-ul">
+<li>Many LightGBM parameters are supposed to be limited to defined
+sets of values (e.g. fractions in the range \([0, 1]\), numbers in
+the range \([1, 2)\), or strictly positive integers).  In this
+Haskell interface I use refinement types to try to ensure that
+these limitations are honored - at compile time when possible, at
+run time when necessary.</li>
+<li>Many LightGBM parameters are only supposed to be used in a subset
+of cases (e.g. for a particular objective or with a particular
+metric function).  In this Haskell interface I use algebraic data
+types to try to ensure that combinations of parameters that don't
+make sense cannot be represented.</li>
+</ul>
 <p>
-We'll apply LightGBM to the venerable (now 6 years old) Kaggle problem
-of predicting <a href="https://www.kaggle.com/c/titanic">who will survive the sinking of the Titanic</a>.  The code
-and data for this exercise can be found in the <a href="https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic">GitHub repo</a>.
+I hope that these decisions make the library safer and easier to use
+than it would otherwise be.
 </p>
 
 <p>
-<b>N.B. This article is meant to introduce you to the Haskell wrapper
-for LightGBM, not to best approaches to Kaggle competitions!</b> The
-approach taken in this article is naive in the extreme in order to
-ensure that you don't lose track of the particularly Haskellish tree
-that we care about in this machine-learning forest.  If you're looking
-for best approaches to the Titanic problem, look elsewhere.
+So let's take a look at how to put the library to use.
 </p>
 </div>
+</div>
 
-<div id="outline-container-org3f64348" class="outline-3">
-<h3 id="org3f64348">Data Preparation</h3>
-<div class="outline-text-3" id="text-org3f64348">
+<div id="outline-container-orgadd08c9" class="outline-2">
+<h2 id="orgadd08c9">How to use the library</h2>
+<div class="outline-text-2" id="text-orgadd08c9">
+<p>
+We'll apply LightGBM to the venerable Kaggle problem of predicting <a href="https://www.kaggle.com/c/titanic">who
+will survive the sinking of the Titanic</a>.  The code and data for this
+exercise can be found in the <a href="https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic">Titanic example subdirectory of the
+GitHub repo</a>.<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup></p>
+</div>
+
+
+<div id="outline-container-org852af24" class="outline-3">
+<h3 id="org852af24">Data Preparation</h3>
+<div class="outline-text-3" id="text-org852af24">
 <p>
 We start by taking the <a href="https://www.kaggle.com/c/titanic/data">Kaggle training data</a> and splitting it into two
-parts - one for training and one for validation.<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup> In the <a href="https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic">repo</a>,
+parts - one for training and one for validation.<sup><a id="fnr.2" class="footref" href="#fn.2">2</a></sup> In the <a href="https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic">repo</a>,
 you'll find these files named <code>train_part.csv</code> and
 <code>validate_part.csv</code>.  
 </p>
@@ -185,7 +213,7 @@ The next step is to note that LightGBM requires that categorical
 features be encoded as integer values, so we'll need to convert some
 of the columns (e.g. <code>Sex</code>, <code>Embarked</code>) into integers.  In my case, I
 wrote some code using Haskell's <a href="http://hackage.haskell.org/package/cassava">Cassava CSV library</a> to do the
-conversion,<sup><a id="fnr.2" class="footref" href="#fn.2">2</a></sup> but any approach you want to use is fine.
+conversion,<sup><a id="fnr.3" class="footref" href="#fn.3">3</a></sup> but any approach you want to use is fine.
 </p>
 
 <p>
@@ -193,7 +221,7 @@ We should also get rid of any columns which will induce spurious
 correlations or which have so little data that we can't use them.  In
 our case, that would include <code>Name</code> and <code>Ticket</code> for probable
 irrelevance, and <code>Cabin</code> for lack of a reasonable amount of
-data.<sup><a id="fnr.3" class="footref" href="#fn.3">3</a></sup> We end up with a filtered dataset that looks like this:
+data.<sup><a id="fnr.4" class="footref" href="#fn.4">4</a></sup> We end up with a filtered dataset that looks like this:
 </p>
 
 <table border="2" cellspacing="0" cellpadding="6" rules="all" frame="border">
@@ -271,9 +299,9 @@ LightGBM to ignore it.
 </div>
 </div>
 
-<div id="outline-container-org5cc9854" class="outline-3">
-<h3 id="org5cc9854">Training the booster</h3>
-<div class="outline-text-3" id="text-org5cc9854">
+<div id="outline-container-orga77b717" class="outline-3">
+<h3 id="orga77b717">Training the booster</h3>
+<div class="outline-text-3" id="text-orga77b717">
 <p>
 Training the booster is pretty straightforward - feed the training
 data into the training algorithm, give a few hyperparameters, and let
@@ -282,9 +310,9 @@ highlights.
 </p>
 </div>
 
-<div id="outline-container-orge1ecaba" class="outline-4">
-<h4 id="orge1ecaba">Imports</h4>
-<div class="outline-text-4" id="text-orge1ecaba">
+<div id="outline-container-orgef45fe8" class="outline-4">
+<h4 id="orgef45fe8">Imports</h4>
+<div class="outline-text-4" id="text-orgef45fe8">
 <p>
 First, some imports to get the LightGBM library and CSV filtering
 logic:
@@ -297,9 +325,9 @@ logic:
 </div>
 </div>
 
-<div id="outline-container-org4656b11" class="outline-4">
-<h4 id="org4656b11">Training Parameters</h4>
-<div class="outline-text-4" id="text-org4656b11">
+<div id="outline-container-org408c98f" class="outline-4">
+<h4 id="org408c98f">Training Parameters</h4>
+<div class="outline-text-4" id="text-org408c98f">
 <p>
 Next, the parameters that control the training of the booster:
 </p>
@@ -329,9 +357,9 @@ There are several things to note here:
 <ul class="org-ul">
 <li>I use the <a href="https://hackage.haskell.org/package/refined">refined</a> library to limit some of the parameters to their
 proper domains.  For example, the <code>FeatureFraction</code> should be in
-the range \([0, 1]\), and by using a refined type I can ensure that
-it's so at compile time (at the expense of enabling the
-<code>TemplateHaskell</code> language extension).</li>
+the range \([0, 1]\), and by using a refinement of the <code>Double</code> type
+I can ensure that it's so at compile time (at the expense of
+enabling the <code>TemplateHaskell</code> language extension).</li>
 <li>LightGBM multi-parameters are converted into lists (e.g. the
 <code>Metric</code> parameter).</li>
 <li>LightGBM enumerated parameters are turned into equivalent sum
@@ -360,9 +388,9 @@ coherence is up to the user.
 </div>
 </div>
 
-<div id="outline-container-org97ff30e" class="outline-4">
-<h4 id="org97ff30e">Loading Data</h4>
-<div class="outline-text-4" id="text-org97ff30e">
+<div id="outline-container-org83c8ef1" class="outline-4">
+<h4 id="org83c8ef1">Loading Data</h4>
+<div class="outline-text-4" id="text-org83c8ef1">
 <p>
 The library provides a simple interface to load data from a CSV file
 with an optional header into a <code>DataSet</code> for use with the algorithm.
@@ -376,9 +404,9 @@ is in order.
 </div>
 </div>
 
-<div id="outline-container-orgcb119d3" class="outline-4">
-<h4 id="orgcb119d3">Training</h4>
-<div class="outline-text-4" id="text-orgcb119d3">
+<div id="outline-container-org6d6b829" class="outline-4">
+<h4 id="org6d6b829">Training</h4>
+<div class="outline-text-4" id="text-org6d6b829">
 <p>
 I create a couple of temporary files to hold the filtered data (I'm
 doing the filtering inline - I could also have filtered the data
@@ -421,9 +449,9 @@ during training).
 </div>
 </div>
 
-<div id="outline-container-orgd1600b7" class="outline-4">
-<h4 id="orgd1600b7">Predicting</h4>
-<div class="outline-text-4" id="text-orgd1600b7">
+<div id="outline-container-org856bc7f" class="outline-4">
+<h4 id="org856bc7f">Predicting</h4>
+<div class="outline-text-4" id="text-org856bc7f">
 <p>
 Now that we have the model, we can use it to predict the fate of other
 passengers.  Here we go:
@@ -457,9 +485,9 @@ submitting to Kaggle.).
 </div>
 </div>
 
-<div id="outline-container-org90a4c66" class="outline-2">
-<h2 id="org90a4c66">Caveats</h2>
-<div class="outline-text-2" id="text-org90a4c66">
+<div id="outline-container-org1b36885" class="outline-2">
+<h2 id="org1b36885">Caveats</h2>
+<div class="outline-text-2" id="text-org1b36885">
 <p>
 This interface to the LightGBM library is fundamentally a wrapper
 around the command-line interface to LightGBM, which makes it rather
@@ -476,9 +504,9 @@ matters.
 </div>
 </div>
 
-<div id="outline-container-org31cea70" class="outline-2">
-<h2 id="org31cea70">Future directions?</h2>
-<div class="outline-text-2" id="text-org31cea70">
+<div id="outline-container-orge3b03fb" class="outline-2">
+<h2 id="orge3b03fb">Future directions?</h2>
+<div class="outline-text-2" id="text-orge3b03fb">
 <p>
 The wrapper presented here is still very rudimentary, and many
 improvements should be made.  For example:
@@ -501,6 +529,19 @@ data frame directly as input and extract a dataframe as output.</li>
 
 <div class="footdef">
 <sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup><div class="footpara"><p class="footpara">
+Please note that this article is only meant to introduce you to
+the Haskell wrapper for LightGBM in the simplest way possible! The
+approach taken in this article to the actual machine learning problem
+at hand is intentionally naive to make sure that the exposition of the
+library doesn't get lost in the complexity of handling a machine
+learning problem properly.  Do not take this approach as a tutorial in
+how to approach machine learning in general!  A few of the most
+egregious simplifications will be called out in the footnotes.
+</p></div>
+</div>
+
+<div class="footdef">
+<sup><a id="fn.2" class="footnum" href="#fnr.2">2</a></sup><div class="footpara"><p class="footpara">
 This "holdout" approach is not a particularly good validation
 method, but it's simple to implement.  Some high-level interfaces to
 LightGBM provide support for cross-validation, and I might supply that
@@ -509,14 +550,14 @@ too eventually.
 </div>
 
 <div class="footdef">
-<sup><a id="fn.2" class="footnum" href="#fnr.2">2</a></sup><div class="footpara"><p class="footpara">
+<sup><a id="fn.3" class="footnum" href="#fnr.3">3</a></sup><div class="footpara"><p class="footpara">
 Take a look at <code>ConvertData.hs</code> in the <a href="https://github.com/dpkatz/HaskellGBM/blob/master/examples/titanic/ConvertData.hs">repo</a> if you're
 interested.
 </p></div>
 </div>
 
 <div class="footdef">
-<sup><a id="fn.3" class="footnum" href="#fnr.3">3</a></sup><div class="footpara"><p class="footpara">
+<sup><a id="fn.4" class="footnum" href="#fnr.4">4</a></sup><div class="footpara"><p class="footpara">
 I leave open the possibility of engineering features on the
 basis of these columns (e.g. using titles from names as a proxy for
 social class, or correlating cabin numbers to particular locations on
