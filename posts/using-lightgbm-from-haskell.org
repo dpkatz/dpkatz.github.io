@@ -9,6 +9,13 @@
 .. type: text
 #+END_COMMENT
 
+* Summary
+#+BEGIN_QUOTE
+  - Easily run LightGBM from Haskell
+  - Improved parameter value safety thanks to refined types
+  - Improved parameter grouping safety thanks to algebraic data types
+#+END_QUOTE
+
 * Introduction
 
 One of the most popular recent approaches to tree boosting as a
@@ -19,24 +26,36 @@ APIs in Python and R as well as a community-provided [[https://github.com/Allard
 It does not, however, do anything to make life easy for the average
 Haskell programmer.  Let's change that.
 
-I've created a [[https://github.com/dpkatz/HaskellGBM][Haskell wrapper around LightGBM]] - let's take a look
-at how to use it.
+I've created a [[https://github.com/dpkatz/HaskellGBM][Haskell wrapper around LightGBM]] which makes it easy to
+call the library from a Haskell program.  Beyond simply making it
+possible to use LightGBM from Haskell, however, I've tried to make
+this interface to the library relatively safe.  In partcular:
+  - Many LightGBM parameters are supposed to be limited to defined
+    sets of values (e.g. fractions in the range $[0, 1]$, numbers in
+    the range $[1, 2)$, or strictly positive integers).  In this
+    Haskell interface I use refinement types to try to ensure that
+    these limitations are honored - at compile time when possible, at
+    run time when necessary.
+  - Many LightGBM parameters are only supposed to be used in a subset
+    of cases (e.g. for a particular objective or with a particular
+    metric function).  In this Haskell interface I use algebraic data
+    types to try to ensure that combinations of parameters that don't
+    make sense cannot be represented.
+I hope that these decisions make the library safer and easier to use
+than it would otherwise be.
+
+So let's take a look at how to put the library to use.
 
 * How to use the library
-We'll apply LightGBM to the venerable (now 6 years old) Kaggle problem
-of predicting [[https://www.kaggle.com/c/titanic][who will survive the sinking of the Titanic]].  The code
-and data for this exercise can be found in the [[https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic][GitHub repo]].
+We'll apply LightGBM to the venerable Kaggle problem of predicting [[https://www.kaggle.com/c/titanic][who
+will survive the sinking of the Titanic]].  The code and data for this
+exercise can be found in the [[https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic][Titanic example subdirectory of the
+GitHub repo]].[fn:1]
 
-*N.B. This article is meant to introduce you to the Haskell wrapper
-for LightGBM, not to best approaches to Kaggle competitions!* The
-approach taken in this article is naive in the extreme in order to
-ensure that you don't lose track of the particularly Haskellish tree
-that we care about in this machine-learning forest.  If you're looking
-for best approaches to the Titanic problem, look elsewhere.
 
 ** Data Preparation
 We start by taking the [[https://www.kaggle.com/c/titanic/data][Kaggle training data]] and splitting it into two
-parts - one for training and one for validation.[fn:1] In the [[https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic][repo]],
+parts - one for training and one for validation.[fn:2] In the [[https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic][repo]],
 you'll find these files named =train_part.csv= and
 =validate_part.csv=.  
 
@@ -51,13 +70,13 @@ The next step is to note that LightGBM requires that categorical
 features be encoded as integer values, so we'll need to convert some
 of the columns (e.g. ~Sex~, ~Embarked~) into integers.  In my case, I
 wrote some code using Haskell's [[http://hackage.haskell.org/package/cassava][Cassava CSV library]] to do the
-conversion,[fn:2] but any approach you want to use is fine.
+conversion,[fn:3] but any approach you want to use is fine.
 
 We should also get rid of any columns which will induce spurious
 correlations or which have so little data that we can't use them.  In
 our case, that would include ~Name~ and ~Ticket~ for probable
 irrelevance, and ~Cabin~ for lack of a reasonable amount of
-data.[fn:3] We end up with a filtered dataset that looks like this:
+data.[fn:4] We end up with a filtered dataset that looks like this:
 
 #+ATTR_HTML: :border 2 :rules all :frame border
 | Survived | PassengerId | Pclass | Sex |  Age | SibSp | Parch |    Fare | Embarked |
@@ -120,9 +139,9 @@ trainParams =
 There are several things to note here:  
   - I use the [[https://hackage.haskell.org/package/refined][refined]] library to limit some of the parameters to their
     proper domains.  For example, the =FeatureFraction= should be in
-    the range $[0, 1]$, and by using a refined type I can ensure that
-    it's so at compile time (at the expense of enabling the
-    =TemplateHaskell= language extension).
+    the range $[0, 1]$, and by using a refinement of the =Double= type
+    I can ensure that it's so at compile time (at the expense of
+    enabling the =TemplateHaskell= language extension).
   - LightGBM multi-parameters are converted into lists (e.g. the
     =Metric= parameter).
   - LightGBM enumerated parameters are turned into equivalent sum
@@ -251,17 +270,26 @@ improvements should be made.  For example:
 
 * Footnotes
 
-[fn:3] I leave open the possibility of engineering features on the
+[fn:1] Please note that this article is only meant to introduce you to
+the Haskell wrapper for LightGBM in the simplest way possible! The
+approach taken in this article to the actual machine learning problem
+at hand is intentionally naive to make sure that the exposition of the
+library doesn't get lost in the complexity of handling a machine
+learning problem properly.  Do not take this approach as a tutorial in
+how to approach machine learning in general!  A few of the most
+egregious simplifications will be called out in the footnotes.
+
+[fn:2] This "holdout" approach is not a particularly good validation
+method, but it's simple to implement.  Some high-level interfaces to
+LightGBM provide support for cross-validation, and I might supply that
+too eventually.
+
+[fn:3] Take a look at =ConvertData.hs= in the [[https://github.com/dpkatz/HaskellGBM/blob/master/examples/titanic/ConvertData.hs][repo]] if you're
+interested.
+
+[fn:4] I leave open the possibility of engineering features on the
 basis of these columns (e.g. using titles from names as a proxy for
 social class, or correlating cabin numbers to particular locations on
 the ship); I'm just saying that leaving these columns as they are
 doesn't give us any useful information for a feature.
-
-[fn:2] Take a look at =ConvertData.hs= in the [[https://github.com/dpkatz/HaskellGBM/blob/master/examples/titanic/ConvertData.hs][repo]] if you're
-interested.
-
-[fn:1] This "holdout" approach is not a particularly good validation
-method, but it's simple to implement.  Some high-level interfaces to
-LightGBM provide support for cross-validation, and I might supply that
-too eventually.
 
