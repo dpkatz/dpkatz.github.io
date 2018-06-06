@@ -109,7 +109,7 @@ logic:
 import qualified LightGBM as LGBM
 import qualified LightGBM.DataSet as DS
 import qualified LightGBM.Parameters as P
-import           ConvertData (csvFilter)
+import           ConvertData (csvFilter, testFilter)
 #+END_SRC
 
 *** Training Parameters
@@ -202,7 +202,7 @@ trainModel =
       case model of
         Left e -> error $ "Error training model:  " ++ show e
         Right m -> do
-          print $ "Model trained and saved to file:  " ++ modelName
+          _ <- LGBM.writeModelFile modelFile m
 	  -- [... a bit of self validation code elided here ...]
           return m
 #+END_SRC
@@ -233,8 +233,12 @@ main = do
           hClose testHandle
           TMP.withSystemTempFile "predictions" $ \predFile predHandle -> do
             hClose predHandle
-            _ <- LGBM.writeCsvFile predFile =<<
-                 LGBM.predict m (loadData testFile)
+
+            predResults <- LGBM.predict m [] (loadData testFile)
+            case predResults of
+              Left e -> error $ "Error predicting final results:  " ++ show e
+              Right predValues -> do
+                LGBM.writeCsvFile predFile predValues
 
           -- [... some code to report the output in Kaggle format elided ...]
     )
