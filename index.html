@@ -42,9 +42,9 @@
             <p class="dateline"><a href="posts/using-lightgbm-from-haskell/" rel="bookmark"><time class="published dt-published" datetime="2018-05-31T11:22:08-04:00" title="2018-05-31 11:22">2018-05-31 11:22</time></a></p>
         </div>
     </header><div class="e-content entry-content">
-    <div id="outline-container-orge99f3ab" class="outline-2">
-<h2 id="orge99f3ab">Summary</h2>
-<div class="outline-text-2" id="text-orge99f3ab">
+    <div id="outline-container-org8bf5f24" class="outline-2">
+<h2 id="org8bf5f24">Summary</h2>
+<div class="outline-text-2" id="text-org8bf5f24">
 <blockquote>
 <ul class="org-ul">
 <li>Easily run LightGBM from Haskell</li>
@@ -55,9 +55,9 @@
 </div>
 </div>
 
-<div id="outline-container-org7a63210" class="outline-2">
-<h2 id="org7a63210">Introduction</h2>
-<div class="outline-text-2" id="text-org7a63210">
+<div id="outline-container-org4f06e11" class="outline-2">
+<h2 id="org4f06e11">Introduction</h2>
+<div class="outline-text-2" id="text-org4f06e11">
 <p>
 One of the most popular recent approaches to tree boosting as a
 machine learning approach is <a href="https://github.com/Microsoft/LightGBM">LightGBM</a>.  It's fast, performs well on
@@ -98,9 +98,9 @@ So let's take a look at how to put the library to use.
 </div>
 </div>
 
-<div id="outline-container-org01423d8" class="outline-2">
-<h2 id="org01423d8">How to use the library</h2>
-<div class="outline-text-2" id="text-org01423d8">
+<div id="outline-container-orged30e32" class="outline-2">
+<h2 id="orged30e32">How to use the library</h2>
+<div class="outline-text-2" id="text-orged30e32">
 <p>
 We'll apply LightGBM to the venerable Kaggle problem of predicting <a href="https://www.kaggle.com/c/titanic">who
 will survive the sinking of the Titanic</a>.  The code and data for this
@@ -109,9 +109,9 @@ GitHub repo</a>.<sup><a id="fnr.1" class="footref" href="posts/using-lightgbm-fr
 </div>
 
 
-<div id="outline-container-org5ca9abf" class="outline-3">
-<h3 id="org5ca9abf">Data Preparation</h3>
-<div class="outline-text-3" id="text-org5ca9abf">
+<div id="outline-container-orge3b564c" class="outline-3">
+<h3 id="orge3b564c">Data Preparation</h3>
+<div class="outline-text-3" id="text-orge3b564c">
 <p>
 We start by taking the <a href="https://www.kaggle.com/c/titanic/data">Kaggle training data</a> and splitting it into two
 parts - one for training and one for validation.<sup><a id="fnr.2" class="footref" href="posts/using-lightgbm-from-haskell/#fn.2">2</a></sup> In the <a href="https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic">repo</a>,
@@ -287,9 +287,9 @@ LightGBM to ignore it.
 </div>
 </div>
 
-<div id="outline-container-org2f478aa" class="outline-3">
-<h3 id="org2f478aa">Training the booster</h3>
-<div class="outline-text-3" id="text-org2f478aa">
+<div id="outline-container-org60b190e" class="outline-3">
+<h3 id="org60b190e">Training the booster</h3>
+<div class="outline-text-3" id="text-org60b190e">
 <p>
 Training the booster is pretty straightforward - feed the training
 data into the training algorithm, give a few hyperparameters, and let
@@ -298,9 +298,9 @@ highlights.
 </p>
 </div>
 
-<div id="outline-container-org092b758" class="outline-4">
-<h4 id="org092b758">Imports</h4>
-<div class="outline-text-4" id="text-org092b758">
+<div id="outline-container-org1c70b60" class="outline-4">
+<h4 id="org1c70b60">Imports</h4>
+<div class="outline-text-4" id="text-org1c70b60">
 <p>
 First, some imports to get the LightGBM library and CSV filtering
 logic:
@@ -313,15 +313,15 @@ logic:
 </div>
 </div>
 
-<div id="outline-container-orge4cb028" class="outline-4">
-<h4 id="orge4cb028">Training Parameters</h4>
-<div class="outline-text-4" id="text-orge4cb028">
+<div id="outline-container-orgf85062e" class="outline-4">
+<h4 id="orgf85062e">Training Parameters</h4>
+<div class="outline-text-4" id="text-orgf85062e">
 <p>
 Next, the parameters that control the training of the booster:
 </p>
 <div class="highlight"><pre><span></span><span class="nf">trainParams</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">P</span><span class="o">.</span><span class="kt">Param</span><span class="p">]</span>
 <span class="nf">trainParams</span> <span class="ow">=</span>
-  <span class="p">[</span> <span class="kt">P</span><span class="o">.</span><span class="kt">Objective</span> <span class="kt">P</span><span class="o">.</span><span class="kt">Binary</span>
+  <span class="p">[</span> <span class="kt">P</span><span class="o">.</span><span class="kt">Objective</span> <span class="kt">P</span><span class="o">.</span><span class="kt">BinaryClassification</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">Metric</span> <span class="p">[</span><span class="kt">P</span><span class="o">.</span><span class="kt">BinaryLogloss</span><span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">AUC</span><span class="p">]</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">TrainingMetric</span> <span class="kt">True</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">LearningRate</span> <span class="o">$$</span><span class="p">(</span><span class="n">refineTH</span> <span class="mf">0.1</span><span class="p">)</span>
@@ -346,12 +346,12 @@ There are several things to note here:
 proper domains.  For example, the <code>FeatureFraction</code> should be in
 the range \((0, 1]\), and by using a refinement of the <code>Double</code> type
 I can ensure that it's so at compile time (with that <code>$$(refineTH
-    ...)</code> stuff).<sup><a id="fnr.5" class="footref" href="posts/using-lightgbm-from-haskell/#fn.5">5</a></sup>
+    ...)</code> Template Haskell stuff).<sup><a id="fnr.5" class="footref" href="posts/using-lightgbm-from-haskell/#fn.5">5</a></sup>
 </li>
 <li>LightGBM multi-parameters are converted into lists (e.g. the
 <code>Metric</code> parameter).</li>
 <li>LightGBM enumerated parameters are turned into equivalent sum
-types (e.g. the <code>App</code> parameter).</li>
+types (e.g. the <code>Objective</code> parameter).</li>
 <li>Column selection is based on a sum type rather than a string
 prefix as is done in the standard LightGBM parameters (e.g. in the
 <code>LabelColumn</code> parameter).</li>
@@ -376,9 +376,9 @@ coherence is up to the user.
 </div>
 </div>
 
-<div id="outline-container-org73be97d" class="outline-4">
-<h4 id="org73be97d">Loading Data</h4>
-<div class="outline-text-4" id="text-org73be97d">
+<div id="outline-container-orgcd79f67" class="outline-4">
+<h4 id="orgcd79f67">Loading Data</h4>
+<div class="outline-text-4" id="text-orgcd79f67">
 <p>
 The library provides a simple interface to load data from a CSV file
 with an optional header into a <code>DataSet</code> for use with the algorithm.
@@ -392,9 +392,9 @@ is in order.
 </div>
 </div>
 
-<div id="outline-container-org9f2381b" class="outline-4">
-<h4 id="org9f2381b">Training</h4>
-<div class="outline-text-4" id="text-org9f2381b">
+<div id="outline-container-org06be91e" class="outline-4">
+<h4 id="org06be91e">Training</h4>
+<div class="outline-text-4" id="text-org06be91e">
 <p>
 I create a couple of temporary files to hold the filtered data (I'm
 doing the filtering inline - I could also have filtered the data
@@ -437,9 +437,9 @@ during training).
 </div>
 </div>
 
-<div id="outline-container-org191e5ac" class="outline-4">
-<h4 id="org191e5ac">Predicting</h4>
-<div class="outline-text-4" id="text-org191e5ac">
+<div id="outline-container-orgfa40784" class="outline-4">
+<h4 id="orgfa40784">Predicting</h4>
+<div class="outline-text-4" id="text-orgfa40784">
 <p>
 Now that we have the model, we can use it to predict the fate of other
 passengers.  Here we go:
@@ -477,9 +477,9 @@ submitting to Kaggle.).
 </div>
 </div>
 
-<div id="outline-container-org0863a43" class="outline-2">
-<h2 id="org0863a43">Caveats</h2>
-<div class="outline-text-2" id="text-org0863a43">
+<div id="outline-container-org9771685" class="outline-2">
+<h2 id="org9771685">Caveats</h2>
+<div class="outline-text-2" id="text-org9771685">
 <p>
 This interface to the LightGBM library is fundamentally a wrapper
 around the command-line interface to LightGBM, which makes it rather
@@ -496,9 +496,9 @@ matters.
 </div>
 </div>
 
-<div id="outline-container-org6f52a2e" class="outline-2">
-<h2 id="org6f52a2e">Future directions?</h2>
-<div class="outline-text-2" id="text-org6f52a2e">
+<div id="outline-container-org7883c6c" class="outline-2">
+<h2 id="org7883c6c">Future directions?</h2>
+<div class="outline-text-2" id="text-org7883c6c">
 <p>
 The wrapper presented here is still very rudimentary, and many
 improvements should be made.  For example:
