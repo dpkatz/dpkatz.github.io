@@ -54,9 +54,9 @@
         
 
     </header><div class="e-content entry-content" itemprop="articleBody text">
-    <div id="outline-container-orga5fafb9" class="outline-2">
-<h2 id="orga5fafb9">Summary</h2>
-<div class="outline-text-2" id="text-orga5fafb9">
+    <div id="outline-container-orge99f3ab" class="outline-2">
+<h2 id="orge99f3ab">Summary</h2>
+<div class="outline-text-2" id="text-orge99f3ab">
 <blockquote>
 <ul class="org-ul">
 <li>Easily run LightGBM from Haskell</li>
@@ -67,9 +67,9 @@
 </div>
 </div>
 
-<div id="outline-container-orgdae5624" class="outline-2">
-<h2 id="orgdae5624">Introduction</h2>
-<div class="outline-text-2" id="text-orgdae5624">
+<div id="outline-container-org7a63210" class="outline-2">
+<h2 id="org7a63210">Introduction</h2>
+<div class="outline-text-2" id="text-org7a63210">
 <p>
 One of the most popular recent approaches to tree boosting as a
 machine learning approach is <a href="https://github.com/Microsoft/LightGBM">LightGBM</a>.  It's fast, performs well on
@@ -90,9 +90,9 @@ this interface to the library relatively safe.  In partcular:
 <li>Many LightGBM parameters are supposed to be limited to defined
 sets of values (e.g. fractions in the range \([0, 1]\), numbers in
 the range \([1, 2)\), or strictly positive integers).  In this
-Haskell interface I use refinement types to try to ensure that
-these limitations are honored - at compile time when possible, at
-run time when necessary.</li>
+Haskell interface I use refinement types to ensure that these
+limitations are honored - at compile time when possible, at run
+time when necessary.</li>
 <li>Many LightGBM parameters are only supposed to be used in a subset
 of cases (e.g. for a particular objective or with a particular
 metric function).  In this Haskell interface I use algebraic data
@@ -110,9 +110,9 @@ So let's take a look at how to put the library to use.
 </div>
 </div>
 
-<div id="outline-container-org903066e" class="outline-2">
-<h2 id="org903066e">How to use the library</h2>
-<div class="outline-text-2" id="text-org903066e">
+<div id="outline-container-org01423d8" class="outline-2">
+<h2 id="org01423d8">How to use the library</h2>
+<div class="outline-text-2" id="text-org01423d8">
 <p>
 We'll apply LightGBM to the venerable Kaggle problem of predicting <a href="https://www.kaggle.com/c/titanic">who
 will survive the sinking of the Titanic</a>.  The code and data for this
@@ -121,9 +121,9 @@ GitHub repo</a>.<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup></p>
 </div>
 
 
-<div id="outline-container-orgf332966" class="outline-3">
-<h3 id="orgf332966">Data Preparation</h3>
-<div class="outline-text-3" id="text-orgf332966">
+<div id="outline-container-org5ca9abf" class="outline-3">
+<h3 id="org5ca9abf">Data Preparation</h3>
+<div class="outline-text-3" id="text-org5ca9abf">
 <p>
 We start by taking the <a href="https://www.kaggle.com/c/titanic/data">Kaggle training data</a> and splitting it into two
 parts - one for training and one for validation.<sup><a id="fnr.2" class="footref" href="#fn.2">2</a></sup> In the <a href="https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic">repo</a>,
@@ -299,9 +299,9 @@ LightGBM to ignore it.
 </div>
 </div>
 
-<div id="outline-container-org750e165" class="outline-3">
-<h3 id="org750e165">Training the booster</h3>
-<div class="outline-text-3" id="text-org750e165">
+<div id="outline-container-org2f478aa" class="outline-3">
+<h3 id="org2f478aa">Training the booster</h3>
+<div class="outline-text-3" id="text-org2f478aa">
 <p>
 Training the booster is pretty straightforward - feed the training
 data into the training algorithm, give a few hyperparameters, and let
@@ -310,9 +310,9 @@ highlights.
 </p>
 </div>
 
-<div id="outline-container-org77afe14" class="outline-4">
-<h4 id="org77afe14">Imports</h4>
-<div class="outline-text-4" id="text-org77afe14">
+<div id="outline-container-org092b758" class="outline-4">
+<h4 id="org092b758">Imports</h4>
+<div class="outline-text-4" id="text-org092b758">
 <p>
 First, some imports to get the LightGBM library and CSV filtering
 logic:
@@ -325,31 +325,30 @@ logic:
 </div>
 </div>
 
-<div id="outline-container-org34b5717" class="outline-4">
-<h4 id="org34b5717">Training Parameters</h4>
-<div class="outline-text-4" id="text-org34b5717">
+<div id="outline-container-orge4cb028" class="outline-4">
+<h4 id="orge4cb028">Training Parameters</h4>
+<div class="outline-text-4" id="text-orge4cb028">
 <p>
 Next, the parameters that control the training of the booster:
 </p>
 <div class="highlight"><pre><span></span><span class="nf">trainParams</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">P</span><span class="o">.</span><span class="kt">Param</span><span class="p">]</span>
 <span class="nf">trainParams</span> <span class="ow">=</span>
-  <span class="p">[</span> <span class="kt">P</span><span class="o">.</span><span class="kt">App</span> <span class="kt">P</span><span class="o">.</span><span class="kt">Binary</span>
+  <span class="p">[</span> <span class="kt">P</span><span class="o">.</span><span class="kt">Objective</span> <span class="kt">P</span><span class="o">.</span><span class="kt">Binary</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">Metric</span> <span class="p">[</span><span class="kt">P</span><span class="o">.</span><span class="kt">BinaryLogloss</span><span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">AUC</span><span class="p">]</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">TrainingMetric</span> <span class="kt">True</span>
-  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">LearningRate</span> <span class="mf">0.1</span>
-  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">NumLeaves</span> <span class="mi">63</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">LearningRate</span> <span class="o">$$</span><span class="p">(</span><span class="n">refineTH</span> <span class="mf">0.1</span><span class="p">)</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">NumLeaves</span> <span class="o">$$</span><span class="p">(</span><span class="n">refineTH</span> <span class="mi">63</span><span class="p">)</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">FeatureFraction</span> <span class="o">$$</span><span class="p">(</span><span class="n">refineTH</span> <span class="mf">0.8</span><span class="p">)</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">BaggingFreq</span> <span class="o">$$</span><span class="p">(</span><span class="n">refineTH</span> <span class="mi">5</span><span class="p">)</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">BaggingFraction</span> <span class="o">$$</span><span class="p">(</span><span class="n">refineTH</span> <span class="mf">0.8</span><span class="p">)</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">MinDataInLeaf</span> <span class="mi">50</span>
-  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">MinSumHessianInLeaf</span> <span class="mf">5.0</span>
+  <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">MinSumHessianInLeaf</span> <span class="o">$$</span><span class="p">(</span><span class="n">refineTH</span> <span class="mf">5.0</span><span class="p">)</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">IsSparse</span> <span class="kt">True</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">LabelColumn</span> <span class="o">$</span> <span class="kt">P</span><span class="o">.</span><span class="kt">ColName</span> <span class="s">"Survived"</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">IgnoreColumns</span> <span class="p">[</span><span class="kt">P</span><span class="o">.</span><span class="kt">ColName</span> <span class="s">"PassengerId"</span><span class="p">]</span>
   <span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">CategoricalFeatures</span>
       <span class="p">[</span><span class="kt">P</span><span class="o">.</span><span class="kt">ColName</span> <span class="s">"Pclass"</span><span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">ColName</span> <span class="s">"Sex"</span><span class="p">,</span> <span class="kt">P</span><span class="o">.</span><span class="kt">ColName</span> <span class="s">"Embarked"</span><span class="p">]</span>
   <span class="p">]</span>
-<span class="p">]</span>
 </pre></div>
 <p>
 There are several things to note here:  
@@ -357,9 +356,10 @@ There are several things to note here:
 <ul class="org-ul">
 <li>I use the <a href="https://hackage.haskell.org/package/refined">refined</a> library to limit some of the parameters to their
 proper domains.  For example, the <code>FeatureFraction</code> should be in
-the range \([0, 1]\), and by using a refinement of the <code>Double</code> type
-I can ensure that it's so at compile time (at the expense of
-enabling the <code>TemplateHaskell</code> language extension).</li>
+the range \((0, 1]\), and by using a refinement of the <code>Double</code> type
+I can ensure that it's so at compile time (with that <code>$$(refineTH
+    ...)</code> stuff).<sup><a id="fnr.5" class="footref" href="#fn.5">5</a></sup>
+</li>
 <li>LightGBM multi-parameters are converted into lists (e.g. the
 <code>Metric</code> parameter).</li>
 <li>LightGBM enumerated parameters are turned into equivalent sum
@@ -388,9 +388,9 @@ coherence is up to the user.
 </div>
 </div>
 
-<div id="outline-container-org15f3709" class="outline-4">
-<h4 id="org15f3709">Loading Data</h4>
-<div class="outline-text-4" id="text-org15f3709">
+<div id="outline-container-org73be97d" class="outline-4">
+<h4 id="org73be97d">Loading Data</h4>
+<div class="outline-text-4" id="text-org73be97d">
 <p>
 The library provides a simple interface to load data from a CSV file
 with an optional header into a <code>DataSet</code> for use with the algorithm.
@@ -404,9 +404,9 @@ is in order.
 </div>
 </div>
 
-<div id="outline-container-orgf29ba18" class="outline-4">
-<h4 id="orgf29ba18">Training</h4>
-<div class="outline-text-4" id="text-orgf29ba18">
+<div id="outline-container-org9f2381b" class="outline-4">
+<h4 id="org9f2381b">Training</h4>
+<div class="outline-text-4" id="text-org9f2381b">
 <p>
 I create a couple of temporary files to hold the filtered data (I'm
 doing the filtering inline - I could also have filtered the data
@@ -449,9 +449,9 @@ during training).
 </div>
 </div>
 
-<div id="outline-container-orgad160b1" class="outline-4">
-<h4 id="orgad160b1">Predicting</h4>
-<div class="outline-text-4" id="text-orgad160b1">
+<div id="outline-container-org191e5ac" class="outline-4">
+<h4 id="org191e5ac">Predicting</h4>
+<div class="outline-text-4" id="text-org191e5ac">
 <p>
 Now that we have the model, we can use it to predict the fate of other
 passengers.  Here we go:
@@ -489,9 +489,9 @@ submitting to Kaggle.).
 </div>
 </div>
 
-<div id="outline-container-org1ea4cd7" class="outline-2">
-<h2 id="org1ea4cd7">Caveats</h2>
-<div class="outline-text-2" id="text-org1ea4cd7">
+<div id="outline-container-org0863a43" class="outline-2">
+<h2 id="org0863a43">Caveats</h2>
+<div class="outline-text-2" id="text-org0863a43">
 <p>
 This interface to the LightGBM library is fundamentally a wrapper
 around the command-line interface to LightGBM, which makes it rather
@@ -508,9 +508,9 @@ matters.
 </div>
 </div>
 
-<div id="outline-container-org7e9057d" class="outline-2">
-<h2 id="org7e9057d">Future directions?</h2>
-<div class="outline-text-2" id="text-org7e9057d">
+<div id="outline-container-org6f52a2e" class="outline-2">
+<h2 id="org6f52a2e">Future directions?</h2>
+<div class="outline-text-2" id="text-org6f52a2e">
 <p>
 The wrapper presented here is still very rudimentary, and many
 improvements should be made.  For example:
@@ -567,6 +567,17 @@ basis of these columns (e.g. using titles from names as a proxy for
 social class, or correlating cabin numbers to particular locations on
 the ship); I'm just saying that leaving these columns as they are
 doesn't give us any useful information for a feature.
+</p></div>
+</div>
+
+<div class="footdef">
+<sup><a id="fn.5" class="footnum" href="#fnr.5">5</a></sup><div class="footpara"><p class="footpara">
+Note that to use the Template Haskell approach we need to
+enable the <code>TemplateHaskell</code> extension using a file pragma (as is done
+in the example files) or similar approach.  You always have the option
+of using <code>refine</code> instead of <code>refineTH</code> in which case Template Haskell
+is not needed and the bounds checks will happen at runtime rather than
+compile time.
 </p></div>
 </div>
 

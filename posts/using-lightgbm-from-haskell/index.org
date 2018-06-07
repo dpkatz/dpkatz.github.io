@@ -33,9 +33,9 @@ this interface to the library relatively safe.  In partcular:
   - Many LightGBM parameters are supposed to be limited to defined
     sets of values (e.g. fractions in the range $[0, 1]$, numbers in
     the range $[1, 2)$, or strictly positive integers).  In this
-    Haskell interface I use refinement types to try to ensure that
-    these limitations are honored - at compile time when possible, at
-    run time when necessary.
+    Haskell interface I use refinement types to ensure that these
+    limitations are honored - at compile time when possible, at run
+    time when necessary.
   - Many LightGBM parameters are only supposed to be used in a subset
     of cases (e.g. for a particular objective or with a particular
     metric function).  In this Haskell interface I use algebraic data
@@ -118,30 +118,29 @@ Next, the parameters that control the training of the booster:
 #+BEGIN_SRC haskell
 trainParams :: [P.Param]
 trainParams =
-  [ P.App P.Binary
+  [ P.Objective P.Binary
   , P.Metric [P.BinaryLogloss, P.AUC]
   , P.TrainingMetric True
-  , P.LearningRate 0.1
-  , P.NumLeaves 63
+  , P.LearningRate $$(refineTH 0.1)
+  , P.NumLeaves $$(refineTH 63)
   , P.FeatureFraction $$(refineTH 0.8)
   , P.BaggingFreq $$(refineTH 5)
   , P.BaggingFraction $$(refineTH 0.8)
   , P.MinDataInLeaf 50
-  , P.MinSumHessianInLeaf 5.0
+  , P.MinSumHessianInLeaf $$(refineTH 5.0)
   , P.IsSparse True
   , P.LabelColumn $ P.ColName "Survived"
   , P.IgnoreColumns [P.ColName "PassengerId"]
   , P.CategoricalFeatures
       [P.ColName "Pclass", P.ColName "Sex", P.ColName "Embarked"]
   ]
-]
 #+END_SRC
 There are several things to note here:  
   - I use the [[https://hackage.haskell.org/package/refined][refined]] library to limit some of the parameters to their
     proper domains.  For example, the =FeatureFraction= should be in
-    the range $[0, 1]$, and by using a refinement of the =Double= type
-    I can ensure that it's so at compile time (at the expense of
-    enabling the =TemplateHaskell= language extension).
+    the range $(0, 1]$, and by using a refinement of the =Double= type
+    I can ensure that it's so at compile time (with that =$$(refineTH
+    ...)= stuff).[fn:5]
   - LightGBM multi-parameters are converted into lists (e.g. the
     =Metric= parameter).
   - LightGBM enumerated parameters are turned into equivalent sum
@@ -296,4 +295,11 @@ basis of these columns (e.g. using titles from names as a proxy for
 social class, or correlating cabin numbers to particular locations on
 the ship); I'm just saying that leaving these columns as they are
 doesn't give us any useful information for a feature.
+
+[fn:5] Note that to use the Template Haskell approach we need to
+enable the =TemplateHaskell= extension using a file pragma (as is done
+in the example files) or similar approach.  You always have the option
+of using =refine= instead of =refineTH= in which case Template Haskell
+is not needed and the bounds checks will happen at runtime rather than
+compile time.
 

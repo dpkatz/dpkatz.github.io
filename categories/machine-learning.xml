@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Recursively Boosted (Posts about Machine Learning)</title><link>https://dpkatz.github.io/</link><description></description><atom:link href="https://dpkatz.github.io/categories/machine-learning.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:dpkatz.bc@gmail.com"&gt;Dan Katz&lt;/a&gt; </copyright><lastBuildDate>Wed, 06 Jun 2018 18:55:54 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Using LightGBM from Haskell</title><link>https://dpkatz.github.io/posts/using-lightgbm-from-haskell/</link><dc:creator>Dan Katz</dc:creator><description>&lt;div id="outline-container-orga5fafb9" class="outline-2"&gt;
-&lt;h2 id="orga5fafb9"&gt;Summary&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-orga5fafb9"&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Recursively Boosted (Posts about Machine Learning)</title><link>https://dpkatz.github.io/</link><description></description><atom:link href="https://dpkatz.github.io/categories/machine-learning.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:dpkatz.bc@gmail.com"&gt;Dan Katz&lt;/a&gt; </copyright><lastBuildDate>Thu, 07 Jun 2018 20:21:27 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Using LightGBM from Haskell</title><link>https://dpkatz.github.io/posts/using-lightgbm-from-haskell/</link><dc:creator>Dan Katz</dc:creator><description>&lt;div id="outline-container-orge99f3ab" class="outline-2"&gt;
+&lt;h2 id="orge99f3ab"&gt;Summary&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orge99f3ab"&gt;
 &lt;blockquote&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Easily run LightGBM from Haskell&lt;/li&gt;
@@ -12,9 +12,9 @@
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-orgdae5624" class="outline-2"&gt;
-&lt;h2 id="orgdae5624"&gt;Introduction&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-orgdae5624"&gt;
+&lt;div id="outline-container-org7a63210" class="outline-2"&gt;
+&lt;h2 id="org7a63210"&gt;Introduction&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org7a63210"&gt;
 &lt;p&gt;
 One of the most popular recent approaches to tree boosting as a
 machine learning approach is &lt;a href="https://github.com/Microsoft/LightGBM"&gt;LightGBM&lt;/a&gt;.  It's fast, performs well on
@@ -35,9 +35,9 @@ this interface to the library relatively safe.  In partcular:
 &lt;li&gt;Many LightGBM parameters are supposed to be limited to defined
 sets of values (e.g. fractions in the range \([0, 1]\), numbers in
 the range \([1, 2)\), or strictly positive integers).  In this
-Haskell interface I use refinement types to try to ensure that
-these limitations are honored - at compile time when possible, at
-run time when necessary.&lt;/li&gt;
+Haskell interface I use refinement types to ensure that these
+limitations are honored - at compile time when possible, at run
+time when necessary.&lt;/li&gt;
 &lt;li&gt;Many LightGBM parameters are only supposed to be used in a subset
 of cases (e.g. for a particular objective or with a particular
 metric function).  In this Haskell interface I use algebraic data
@@ -55,9 +55,9 @@ So let's take a look at how to put the library to use.
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-org903066e" class="outline-2"&gt;
-&lt;h2 id="org903066e"&gt;How to use the library&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-org903066e"&gt;
+&lt;div id="outline-container-org01423d8" class="outline-2"&gt;
+&lt;h2 id="org01423d8"&gt;How to use the library&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org01423d8"&gt;
 &lt;p&gt;
 We'll apply LightGBM to the venerable Kaggle problem of predicting &lt;a href="https://www.kaggle.com/c/titanic"&gt;who
 will survive the sinking of the Titanic&lt;/a&gt;.  The code and data for this
@@ -67,9 +67,9 @@ GitHub repo&lt;/a&gt;.&lt;sup&gt;&lt;a id="fnr.1" class="footref" href="https://
 &lt;/div&gt;
 
 
-&lt;div id="outline-container-orgf332966" class="outline-3"&gt;
-&lt;h3 id="orgf332966"&gt;Data Preparation&lt;/h3&gt;
-&lt;div class="outline-text-3" id="text-orgf332966"&gt;
+&lt;div id="outline-container-org5ca9abf" class="outline-3"&gt;
+&lt;h3 id="org5ca9abf"&gt;Data Preparation&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-org5ca9abf"&gt;
 &lt;p&gt;
 We start by taking the &lt;a href="https://www.kaggle.com/c/titanic/data"&gt;Kaggle training data&lt;/a&gt; and splitting it into two
 parts - one for training and one for validation.&lt;sup&gt;&lt;a id="fnr.2" class="footref" href="https://dpkatz.github.io/posts/using-lightgbm-from-haskell/#fn.2"&gt;2&lt;/a&gt;&lt;/sup&gt; In the &lt;a href="https://github.com/dpkatz/HaskellGBM/tree/master/examples/titanic"&gt;repo&lt;/a&gt;,
@@ -277,9 +277,9 @@ LightGBM to ignore it.
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-org750e165" class="outline-3"&gt;
-&lt;h3 id="org750e165"&gt;Training the booster&lt;/h3&gt;
-&lt;div class="outline-text-3" id="text-org750e165"&gt;
+&lt;div id="outline-container-org2f478aa" class="outline-3"&gt;
+&lt;h3 id="org2f478aa"&gt;Training the booster&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-org2f478aa"&gt;
 &lt;p&gt;
 Training the booster is pretty straightforward - feed the training
 data into the training algorithm, give a few hyperparameters, and let
@@ -288,9 +288,9 @@ highlights.
 &lt;/p&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-org77afe14" class="outline-4"&gt;
-&lt;h4 id="org77afe14"&gt;Imports&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-org77afe14"&gt;
+&lt;div id="outline-container-org092b758" class="outline-4"&gt;
+&lt;h4 id="org092b758"&gt;Imports&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org092b758"&gt;
 &lt;p&gt;
 First, some imports to get the LightGBM library and CSV filtering
 logic:
@@ -303,31 +303,30 @@ logic:
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-org34b5717" class="outline-4"&gt;
-&lt;h4 id="org34b5717"&gt;Training Parameters&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-org34b5717"&gt;
+&lt;div id="outline-container-orge4cb028" class="outline-4"&gt;
+&lt;h4 id="orge4cb028"&gt;Training Parameters&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-orge4cb028"&gt;
 &lt;p&gt;
 Next, the parameters that control the training of the booster:
 &lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nf"&gt;trainParams&lt;/span&gt; &lt;span class="ow"&gt;::&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;Param&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="nf"&gt;trainParams&lt;/span&gt; &lt;span class="ow"&gt;=&lt;/span&gt;
-  &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;App&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;Binary&lt;/span&gt;
+  &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;Objective&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;Binary&lt;/span&gt;
   &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;Metric&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;BinaryLogloss&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;AUC&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
   &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;TrainingMetric&lt;/span&gt; &lt;span class="kt"&gt;True&lt;/span&gt;
-  &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;LearningRate&lt;/span&gt; &lt;span class="mf"&gt;0.1&lt;/span&gt;
-  &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;NumLeaves&lt;/span&gt; &lt;span class="mi"&gt;63&lt;/span&gt;
+  &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;LearningRate&lt;/span&gt; &lt;span class="o"&gt;$$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;refineTH&lt;/span&gt; &lt;span class="mf"&gt;0.1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;NumLeaves&lt;/span&gt; &lt;span class="o"&gt;$$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;refineTH&lt;/span&gt; &lt;span class="mi"&gt;63&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
   &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;FeatureFraction&lt;/span&gt; &lt;span class="o"&gt;$$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;refineTH&lt;/span&gt; &lt;span class="mf"&gt;0.8&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
   &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;BaggingFreq&lt;/span&gt; &lt;span class="o"&gt;$$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;refineTH&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
   &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;BaggingFraction&lt;/span&gt; &lt;span class="o"&gt;$$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;refineTH&lt;/span&gt; &lt;span class="mf"&gt;0.8&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
   &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;MinDataInLeaf&lt;/span&gt; &lt;span class="mi"&gt;50&lt;/span&gt;
-  &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;MinSumHessianInLeaf&lt;/span&gt; &lt;span class="mf"&gt;5.0&lt;/span&gt;
+  &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;MinSumHessianInLeaf&lt;/span&gt; &lt;span class="o"&gt;$$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;refineTH&lt;/span&gt; &lt;span class="mf"&gt;5.0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
   &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;IsSparse&lt;/span&gt; &lt;span class="kt"&gt;True&lt;/span&gt;
   &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;LabelColumn&lt;/span&gt; &lt;span class="o"&gt;$&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;ColName&lt;/span&gt; &lt;span class="s"&gt;"Survived"&lt;/span&gt;
   &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;IgnoreColumns&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;ColName&lt;/span&gt; &lt;span class="s"&gt;"PassengerId"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
   &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;CategoricalFeatures&lt;/span&gt;
       &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;ColName&lt;/span&gt; &lt;span class="s"&gt;"Pclass"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;ColName&lt;/span&gt; &lt;span class="s"&gt;"Sex"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;P&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="kt"&gt;ColName&lt;/span&gt; &lt;span class="s"&gt;"Embarked"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
   &lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;
 There are several things to note here:  
@@ -335,9 +334,9 @@ There are several things to note here:
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;I use the &lt;a href="https://hackage.haskell.org/package/refined"&gt;refined&lt;/a&gt; library to limit some of the parameters to their
 proper domains.  For example, the &lt;code&gt;FeatureFraction&lt;/code&gt; should be in
-the range \([0, 1]\), and by using a refinement of the &lt;code&gt;Double&lt;/code&gt; type
-I can ensure that it's so at compile time (at the expense of
-enabling the &lt;code&gt;TemplateHaskell&lt;/code&gt; language extension).&lt;/li&gt;
+the range \((0, 1]\), and by using a refinement of the &lt;code&gt;Double&lt;/code&gt; type
+I can ensure that it's so at compile time (with that &lt;code&gt;$$(refineTH
+    ...)&lt;/code&gt; stuff).&lt;sup&gt;&lt;a id="fnr.5" class="footref" href="https://dpkatz.github.io/posts/using-lightgbm-from-haskell/#fn.5"&gt;5&lt;/a&gt;&lt;/sup&gt;&lt;/li&gt;
 &lt;li&gt;LightGBM multi-parameters are converted into lists (e.g. the
 &lt;code&gt;Metric&lt;/code&gt; parameter).&lt;/li&gt;
 &lt;li&gt;LightGBM enumerated parameters are turned into equivalent sum
@@ -367,9 +366,9 @@ coherence is up to the user.
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-org15f3709" class="outline-4"&gt;
-&lt;h4 id="org15f3709"&gt;Loading Data&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-org15f3709"&gt;
+&lt;div id="outline-container-org73be97d" class="outline-4"&gt;
+&lt;h4 id="org73be97d"&gt;Loading Data&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org73be97d"&gt;
 &lt;p&gt;
 The library provides a simple interface to load data from a CSV file
 with an optional header into a &lt;code&gt;DataSet&lt;/code&gt; for use with the algorithm.
@@ -383,9 +382,9 @@ is in order.
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-orgf29ba18" class="outline-4"&gt;
-&lt;h4 id="orgf29ba18"&gt;Training&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-orgf29ba18"&gt;
+&lt;div id="outline-container-org9f2381b" class="outline-4"&gt;
+&lt;h4 id="org9f2381b"&gt;Training&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org9f2381b"&gt;
 &lt;p&gt;
 I create a couple of temporary files to hold the filtered data (I'm
 doing the filtering inline - I could also have filtered the data
@@ -428,9 +427,9 @@ during training).
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-orgad160b1" class="outline-4"&gt;
-&lt;h4 id="orgad160b1"&gt;Predicting&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-orgad160b1"&gt;
+&lt;div id="outline-container-org191e5ac" class="outline-4"&gt;
+&lt;h4 id="org191e5ac"&gt;Predicting&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org191e5ac"&gt;
 &lt;p&gt;
 Now that we have the model, we can use it to predict the fate of other
 passengers.  Here we go:
@@ -468,9 +467,9 @@ submitting to Kaggle.).
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-org1ea4cd7" class="outline-2"&gt;
-&lt;h2 id="org1ea4cd7"&gt;Caveats&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-org1ea4cd7"&gt;
+&lt;div id="outline-container-org0863a43" class="outline-2"&gt;
+&lt;h2 id="org0863a43"&gt;Caveats&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org0863a43"&gt;
 &lt;p&gt;
 This interface to the LightGBM library is fundamentally a wrapper
 around the command-line interface to LightGBM, which makes it rather
@@ -487,9 +486,9 @@ matters.
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-org7e9057d" class="outline-2"&gt;
-&lt;h2 id="org7e9057d"&gt;Future directions?&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-org7e9057d"&gt;
+&lt;div id="outline-container-org6f52a2e" class="outline-2"&gt;
+&lt;h2 id="org6f52a2e"&gt;Future directions?&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org6f52a2e"&gt;
 &lt;p&gt;
 The wrapper presented here is still very rudimentary, and many
 improvements should be made.  For example:
@@ -539,6 +538,15 @@ basis of these columns (e.g. using titles from names as a proxy for
 social class, or correlating cabin numbers to particular locations on
 the ship); I'm just saying that leaving these columns as they are
 doesn't give us any useful information for a feature.
+&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class="footdef"&gt;&lt;sup&gt;&lt;a id="fn.5" class="footnum" href="https://dpkatz.github.io/posts/using-lightgbm-from-haskell/#fnr.5"&gt;5&lt;/a&gt;&lt;/sup&gt; &lt;div class="footpara"&gt;&lt;p class="footpara"&gt;
+Note that to use the Template Haskell approach we need to
+enable the &lt;code&gt;TemplateHaskell&lt;/code&gt; extension using a file pragma (as is done
+in the example files) or similar approach.  You always have the option
+of using &lt;code&gt;refine&lt;/code&gt; instead of &lt;code&gt;refineTH&lt;/code&gt; in which case Template Haskell
+is not needed and the bounds checks will happen at runtime rather than
+compile time.
 &lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
 
 
