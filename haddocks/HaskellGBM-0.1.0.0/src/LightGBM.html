@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-comment">-- | A simple wrapper around the</span><span>
+</span><a name="line-2"></a><span class="hs-comment">-- &lt;http://lightgbm.readthedocs.io/en/latest/index.html Microsoft LightGBM library&gt;.</span><span>
+</span><a name="line-3"></a><span class="hs-comment">-- Documentation for the various library parameters (see</span><span>
+</span><a name="line-4"></a><span class="hs-comment">-- &quot;LightGBM.Parameters&quot;) can be found</span><span>
+</span><a name="line-5"></a><span class="hs-comment">-- &lt;https://github.com/Microsoft/LightGBM/blob/master/docs/Parameters.rst here&gt;.</span><span>
+</span><a name="line-6"></a><span class="hs-comment">--</span><span>
+</span><a name="line-7"></a><span class="hs-comment">-- /N.B.  The 'lightgbm' executable must be on the system 'PATH'./</span><span>
+</span><a name="line-8"></a><span class="hs-comment">--</span><span>
+</span><a name="line-9"></a><span class="hs-comment">-- __/N.B. This is alpha-level software and should not be/__</span><span>
+</span><a name="line-10"></a><span class="hs-comment">-- __/used in production since the API may still change substantially./__</span><span>
+</span><a name="line-11"></a><span class="hs-comment">--</span><span>
+</span><a name="line-12"></a><span class="hs-comment">-- The basic usage of the library looks something like this:</span><span>
+</span><a name="line-13"></a><span class="hs-comment">--</span><span>
+</span><a name="line-14"></a><span class="hs-comment">-- &gt;  {-# LANGUAGE TemplateHaskell #-}</span><span>
+</span><a name="line-15"></a><span class="hs-comment">-- &gt;</span><span>
+</span><a name="line-16"></a><span class="hs-comment">-- &gt;  [...]</span><span>
+</span><a name="line-17"></a><span class="hs-comment">-- &gt;</span><span>
+</span><a name="line-18"></a><span class="hs-comment">-- &gt;  import           LightGBM ( writeCsvFile</span><span>
+</span><a name="line-19"></a><span class="hs-comment">-- &gt;                            , readCsvFile</span><span>
+</span><a name="line-20"></a><span class="hs-comment">-- &gt;                            , HasHeader(..)</span><span>
+</span><a name="line-21"></a><span class="hs-comment">-- &gt;                            , trainNewModel)</span><span>
+</span><a name="line-22"></a><span class="hs-comment">-- &gt;  import qualified LightGBM.Parameters as P</span><span>
+</span><a name="line-23"></a><span class="hs-comment">-- &gt;  import           Refined (refineTH)</span><span>
+</span><a name="line-24"></a><span class="hs-comment">-- &gt;</span><span>
+</span><a name="line-25"></a><span class="hs-comment">-- &gt;  let modelFile = &quot;/path/to/model/output&quot;</span><span>
+</span><a name="line-26"></a><span class="hs-comment">-- &gt;      trainingData = readCsvFile (HasHeader False) &quot;/path/to/training/data&quot;</span><span>
+</span><a name="line-27"></a><span class="hs-comment">-- &gt;      validationData = readCsvFile (HasHeader False) &quot;/path/to/validation/data&quot;</span><span>
+</span><a name="line-28"></a><span class="hs-comment">-- &gt;      trainingParams = [ P.App P.Binary</span><span>
+</span><a name="line-29"></a><span class="hs-comment">-- &gt;                       , P.Metric [P.BinaryLogloss, P.AUC]</span><span>
+</span><a name="line-30"></a><span class="hs-comment">-- &gt;                       , P.TrainingMetric True</span><span>
+</span><a name="line-31"></a><span class="hs-comment">-- &gt;                       , P.LearningRate 0.1</span><span>
+</span><a name="line-32"></a><span class="hs-comment">-- &gt;                       , P.NumLeaves 63</span><span>
+</span><a name="line-33"></a><span class="hs-comment">-- &gt;                       , P.FeatureFraction $$(refineTH 0.8)</span><span>
+</span><a name="line-34"></a><span class="hs-comment">-- &gt;                       , P.BaggingFreq $$(refineTH 5)</span><span>
+</span><a name="line-35"></a><span class="hs-comment">-- &gt;                       , P.BaggingFraction $$(refineTH 0.8)</span><span>
+</span><a name="line-36"></a><span class="hs-comment">-- &gt;                       , P.MinDataInLeaf 50</span><span>
+</span><a name="line-37"></a><span class="hs-comment">-- &gt;                       , P.MinSumHessianInLeaf 5.0</span><span>
+</span><a name="line-38"></a><span class="hs-comment">-- &gt;                       , P.IsSparse True</span><span>
+</span><a name="line-39"></a><span class="hs-comment">-- &gt;                       ]</span><span>
+</span><a name="line-40"></a><span class="hs-comment">-- &gt;</span><span>
+</span><a name="line-41"></a><span class="hs-comment">-- &gt;  model &lt;- trainNewModel modelFile trainingParams trainingData validationData 100</span><span>
+</span><a name="line-42"></a><span class="hs-comment">-- &gt;</span><span>
+</span><a name="line-43"></a><span class="hs-comment">-- &gt;  let newData = readCsvFile (HasHeader False) &quot;/path/to/inputs_for_prediction&quot;</span><span>
+</span><a name="line-44"></a><span class="hs-comment">-- &gt;      outputFile = &quot;/path/to/prediction_outputs&quot;</span><span>
+</span><a name="line-45"></a><span class="hs-comment">-- &gt;  predict model newData &gt;&gt;= writeCsvFile outputFile</span><span>
+</span><a name="line-46"></a><span class="hs-comment">--</span><span>
+</span><a name="line-47"></a><span class="hs-comment">-- Note that in current versions of LightGBM, categorical features</span><span>
+</span><a name="line-48"></a><span class="hs-comment">-- must be encoded as 'Int's.</span><span>
+</span><a name="line-49"></a><span class="hs-comment">--</span><span>
+</span><a name="line-50"></a><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span>
+</span><a name="line-51"></a><span>  </span><span class="hs-special">(</span><span> </span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">DataSet</span><span>
+</span><a name="line-52"></a><span>  </span><span class="hs-special">,</span><span> </span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">Model</span><span>
+</span><a name="line-53"></a><span>  </span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><a name="line-54"></a><span>
+</span><a name="line-55"></a><span class="hs-keyword">import</span><span> </span><a href="LightGBM.DataSet.html"><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">DataSet</span></a><span>
+</span><a name="line-56"></a><span class="hs-keyword">import</span><span> </span><a href="LightGBM.Model.html"><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">Model</span></a><span>
+</span><a name="line-57"></a></pre></body></html>
