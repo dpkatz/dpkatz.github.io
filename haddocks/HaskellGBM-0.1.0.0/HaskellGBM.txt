@@ -20,6 +20,13 @@ Task :: TaskType -> CommandLineParam
 
 -- | True if the input data has a header
 Header :: Bool -> CommandLineParam
+
+-- | Model Conversion parameters
+data ModelConvParam
+ConvertModelLanguage :: ModelLang -> ModelConvParam
+ConvertModelOutput :: FilePath -> ModelConvParam
+data ModelLang
+CPP :: ModelLang
 data TaskType
 
 -- | Training
@@ -29,12 +36,18 @@ Train :: TaskType
 Predict :: TaskType
 
 -- | Conversion into an if-then-else format
-ConvertModel :: TaskType
+ConvertModel :: [ModelConvParam] -> TaskType
 
 -- | Refitting existing models with new data
 Refit :: TaskType
+instance GHC.Show.Show LightGBM.Internal.CLIParameters.CommandLineParam
+instance GHC.Classes.Eq LightGBM.Internal.CLIParameters.CommandLineParam
 instance GHC.Show.Show LightGBM.Internal.CLIParameters.TaskType
 instance GHC.Classes.Eq LightGBM.Internal.CLIParameters.TaskType
+instance GHC.Show.Show LightGBM.Internal.CLIParameters.ModelConvParam
+instance GHC.Classes.Eq LightGBM.Internal.CLIParameters.ModelConvParam
+instance GHC.Show.Show LightGBM.Internal.CLIParameters.ModelLang
+instance GHC.Classes.Eq LightGBM.Internal.CLIParameters.ModelLang
 
 
 module LightGBM.Utils.Csv
@@ -188,7 +201,7 @@ RandomForest :: Booster
 DART :: [DARTParam] -> Booster
 
 -- | Gradient-based One-Sided Sampling
-GOSS :: Booster
+GOSS :: [GOSSParam] -> Booster
 
 -- | Parameters exclusively for the DART booster
 data DARTParam
@@ -211,6 +224,9 @@ data Direction
 Increasing :: Direction
 Decreasing :: Direction
 NoConstraint :: Direction
+data GOSSParam
+TopRate :: ProperFraction -> GOSSParam
+OtherRate :: ProperFraction -> GOSSParam
 data GPUParam
 GpuPlatformId :: Natural -> GPUParam
 GpuDeviceId :: Natural -> GPUParam
@@ -240,8 +256,6 @@ Xentropy :: Metric
 XentLambda :: Metric
 KullbackLeibler :: Metric
 type Minutes = Natural
-data ModelLang
-CPP :: ModelLang
 
 -- | Multi-classification styles
 data MultiClassStyle
@@ -324,12 +338,6 @@ Regularization_L1 :: NonNegativeDouble -> Param
 Regularization_L2 :: NonNegativeDouble -> Param
 MaxDeltaStep :: PositiveDouble -> Param
 MinSplitGain :: NonNegativeDouble -> Param
-
--- | GOSS only
-TopRate :: ProperFraction -> Param
-
--- | GOSS only
-OtherRate :: ProperFraction -> Param
 
 -- | Minimum number of data points per categorial group
 MinDataPerGroup :: PositiveInt -> Param
@@ -433,8 +441,6 @@ RegSqrt :: Bool -> Param
 Metric :: [Metric] -> Param
 MetricFreq :: PositiveInt -> Param
 TrainingMetric :: Bool -> Param
-ConvertModelLanguage :: ModelLang -> Param
-ConvertModelOutput :: FilePath -> Param
 
 -- | Different types of regression metrics
 data RegressionApp
@@ -477,15 +483,15 @@ instance GHC.Classes.Eq LightGBM.Parameters.ColumnSelector
 instance GHC.Generics.Generic LightGBM.Parameters.Booster
 instance GHC.Show.Show LightGBM.Parameters.Booster
 instance GHC.Classes.Eq LightGBM.Parameters.Booster
+instance GHC.Generics.Generic LightGBM.Parameters.GOSSParam
+instance GHC.Show.Show LightGBM.Parameters.GOSSParam
+instance GHC.Classes.Eq LightGBM.Parameters.GOSSParam
 instance GHC.Generics.Generic LightGBM.Parameters.DARTParam
 instance GHC.Show.Show LightGBM.Parameters.DARTParam
 instance GHC.Classes.Eq LightGBM.Parameters.DARTParam
 instance GHC.Generics.Generic LightGBM.Parameters.Application
 instance GHC.Show.Show LightGBM.Parameters.Application
 instance GHC.Classes.Eq LightGBM.Parameters.Application
-instance GHC.Generics.Generic LightGBM.Parameters.ModelLang
-instance GHC.Show.Show LightGBM.Parameters.ModelLang
-instance GHC.Classes.Eq LightGBM.Parameters.ModelLang
 instance GHC.Generics.Generic LightGBM.Parameters.Metric
 instance GHC.Show.Show LightGBM.Parameters.Metric
 instance GHC.Classes.Eq LightGBM.Parameters.Metric
@@ -520,9 +526,9 @@ instance GHC.Generics.Generic LightGBM.Parameters.TweedieRegressionParam
 instance GHC.Show.Show LightGBM.Parameters.TweedieRegressionParam
 instance GHC.Classes.Eq LightGBM.Parameters.TweedieRegressionParam
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.Booster
+instance Data.Hashable.Class.Hashable LightGBM.Parameters.GOSSParam
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.DARTParam
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.Application
-instance Data.Hashable.Class.Hashable LightGBM.Parameters.ModelLang
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.Metric
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.VerbosityLevel
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.Direction
