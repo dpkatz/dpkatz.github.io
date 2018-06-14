@@ -38,20 +38,21 @@
 </span><a name="line-38"></a><span class="hs-comment">-- &gt;                       , P.IsSparse True</span><span>
 </span><a name="line-39"></a><span class="hs-comment">-- &gt;                       ]</span><span>
 </span><a name="line-40"></a><span class="hs-comment">-- &gt;</span><span>
-</span><a name="line-41"></a><span class="hs-comment">-- &gt;  model &lt;- trainNewModel modelFile trainingParams trainingData validationData 100</span><span>
-</span><a name="line-42"></a><span class="hs-comment">-- &gt;</span><span>
-</span><a name="line-43"></a><span class="hs-comment">-- &gt;  let newData = readCsvFile (HasHeader False) &quot;/path/to/inputs_for_prediction&quot;</span><span>
-</span><a name="line-44"></a><span class="hs-comment">-- &gt;      outputFile = &quot;/path/to/prediction_outputs&quot;</span><span>
-</span><a name="line-45"></a><span class="hs-comment">-- &gt;  predict model newData &gt;&gt;= writeCsvFile outputFile</span><span>
-</span><a name="line-46"></a><span class="hs-comment">--</span><span>
-</span><a name="line-47"></a><span class="hs-comment">-- Note that in current versions of LightGBM, categorical features</span><span>
-</span><a name="line-48"></a><span class="hs-comment">-- must be encoded as 'Int's.</span><span>
-</span><a name="line-49"></a><span class="hs-comment">--</span><span>
-</span><a name="line-50"></a><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span>
-</span><a name="line-51"></a><span>  </span><span class="hs-special">(</span><span> </span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">DataSet</span><span>
-</span><a name="line-52"></a><span>  </span><span class="hs-special">,</span><span> </span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">Model</span><span>
-</span><a name="line-53"></a><span>  </span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
-</span><a name="line-54"></a><span>
-</span><a name="line-55"></a><span class="hs-keyword">import</span><span> </span><a href="LightGBM.DataSet.html"><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">DataSet</span></a><span>
-</span><a name="line-56"></a><span class="hs-keyword">import</span><span> </span><a href="LightGBM.Model.html"><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">Model</span></a><span>
-</span><a name="line-57"></a></pre></body></html>
+</span><a name="line-41"></a><span class="hs-comment">-- &gt;  modelOut &lt;- trainNewModel trainingParams trainingData validationData</span><span>
+</span><a name="line-42"></a><span class="hs-comment">-- &gt;  case modelOut of</span><span>
+</span><a name="line-43"></a><span class="hs-comment">-- &gt;      Left err -&gt; ... -- handle the errors</span><span>
+</span><a name="line-44"></a><span class="hs-comment">-- &gt;      Right model -&gt; do</span><span>
+</span><a name="line-45"></a><span class="hs-comment">-- &gt;          let newData = readCsvFile (HasHeader False) &quot;/path/to/inputs_for_prediction&quot;</span><span>
+</span><a name="line-46"></a><span class="hs-comment">-- &gt;              outputFile = &quot;/path/to/prediction_outputs&quot;</span><span>
+</span><a name="line-47"></a><span class="hs-comment">-- &gt;          predOut &lt;- predict model [] newData</span><span>
+</span><a name="line-48"></a><span class="hs-comment">-- &gt;          case predOut of</span><span>
+</span><a name="line-49"></a><span class="hs-comment">-- &gt;              Left err -&gt; ... -- handle the errors</span><span>
+</span><a name="line-50"></a><span class="hs-comment">-- &gt;              Right preds -&gt; writeCsvFile outputFile preds</span><span>
+</span><a name="line-51"></a><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span>
+</span><a name="line-52"></a><span>  </span><span class="hs-special">(</span><span> </span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">DataSet</span><span>
+</span><a name="line-53"></a><span>  </span><span class="hs-special">,</span><span> </span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">Model</span><span>
+</span><a name="line-54"></a><span>  </span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><a name="line-55"></a><span>
+</span><a name="line-56"></a><span class="hs-keyword">import</span><span> </span><a href="LightGBM.DataSet.html"><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">DataSet</span></a><span>
+</span><a name="line-57"></a><span class="hs-keyword">import</span><span> </span><a href="LightGBM.Model.html"><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">Model</span></a><span>
+</span><a name="line-58"></a></pre></body></html>

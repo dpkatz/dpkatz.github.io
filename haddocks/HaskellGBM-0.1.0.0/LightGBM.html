@@ -33,9 +33,13 @@ window.onload = function () {pageLoad();};
                       , P.IsSparse True
                       ]
 
- model &lt;- trainNewModel modelFile trainingParams trainingData validationData 100
-
- let newData = readCsvFile (HasHeader False) &quot;/path/to/inputs_for_prediction&quot;
-     outputFile = &quot;/path/to/prediction_outputs&quot;
- predict model newData &gt;&gt;= writeCsvFile outputFile</pre><p>Note that in current versions of LightGBM, categorical features
- must be encoded as <code><a href="../base-4.10.1.0/Data-Int.html#t:Int">Int</a></code>s.</p></div></div><div id="interface"><h1>Documentation</h1><div class="top"><p class="src">module <a href="LightGBM-DataSet.html">LightGBM.DataSet</a></p></div><div class="top"><p class="src">module <a href="LightGBM-Model.html">LightGBM.Model</a></p></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.18.1</p></div></body></html>
+ modelOut &lt;- trainNewModel trainingParams trainingData validationData
+ case modelOut of
+     Left err -&gt; ... -- handle the errors
+     Right model -&gt; do
+         let newData = readCsvFile (HasHeader False) &quot;/path/to/inputs_for_prediction&quot;
+             outputFile = &quot;/path/to/prediction_outputs&quot;
+         predOut &lt;- predict model [] newData
+         case predOut of
+             Left err -&gt; ... -- handle the errors
+             Right preds -&gt; writeCsvFile outputFile preds</pre></div></div><div id="interface"><h1>Documentation</h1><div class="top"><p class="src">module <a href="LightGBM-DataSet.html">LightGBM.DataSet</a></p></div><div class="top"><p class="src">module <a href="LightGBM-Model.html">LightGBM.Model</a></p></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.18.1</p></div></body></html>

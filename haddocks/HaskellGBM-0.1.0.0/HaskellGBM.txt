@@ -129,23 +129,23 @@ fileDiff :: FilePath -> FilePath -> IO Bool
 -- | Some utility types used across the library.
 module LightGBM.Utils.Types
 
--- | A <a>Double</a> in the range [1, 2)
-type OneToTwoLeftSemiClosed = Refined (And (Not (LessThan 1)) (LessThan 2)) Double
-
--- | A <a>Double</a> in the range [0, 1]
-type ProperFraction = Refined (And (Not (LessThan 0)) (Not (GreaterThan 1))) Double
-
--- | A <a>Double</a> in the range (0, 1]
-type LeftOpenProperFraction = Refined (And (GreaterThan 0) (Not (GreaterThan 1))) Double
-
--- | A <a>Double</a> in the range (0, 1)
-type OpenProperFraction = Refined (And (GreaterThan 0) (LessThan 1)) Double
-
 -- | An <a>Int</a> in the range [1, <tt><a>maxBound</a> :: <a>Int</a></tt>]
 type PositiveInt = Refined Positive Int
 
 -- | An <a>Int</a> in the range [2, <tt><a>maxBound</a> :: <a>Int</a></tt>]
 type IntGreaterThanOne = Refined (GreaterThan 1) Int
+
+-- | A <a>Double</a> in the range [0, 1]
+type ProperFraction = Refined (And (Not (LessThan 0)) (Not (GreaterThan 1))) Double
+
+-- | A <a>Double</a> in the range (0, 1)
+type OpenProperFraction = Refined (And (GreaterThan 0) (LessThan 1)) Double
+
+-- | A <a>Double</a> in the range (0, 1]
+type LeftOpenProperFraction = Refined (And (GreaterThan 0) (Not (GreaterThan 1))) Double
+
+-- | A <a>Double</a> in the range [1, 2)
+type OneToTwoLeftSemiClosed = Refined (And (Not (LessThan 1)) (LessThan 2)) Double
 
 -- | A <a>Double</a> &gt; 0.0
 type PositiveDouble = Refined Positive Double
@@ -170,113 +170,11 @@ instance (Data.Hashable.Class.Hashable a, Refined.Predicate p a) => Data.Hashabl
 --   Parameter details are documented in the <a>LightGBM documentation</a>.
 --   
 --   Note that some of the parameters listed in the documentation are not
---   exposed here since they're set implicitly through the
---   <a>LightGBM.DataSet</a> or <a>LightGBM.Model</a> API. The list of
---   "implicit" parameters is:
---   
---   <ul>
---   <li>task</li>
---   <li>header</li>
---   </ul>
+--   exposed here since they're set implicitly through other parts of the
+--   API. For instance, the <tt>task</tt> param is set in the
+--   <a>LightGBM.Model</a> API, and the <tt>header</tt> param is set in the
+--   <a>LightGBM.DataSet</a> API.
 module LightGBM.Parameters
-
--- | LightGBM can be used for a variety of applications
-data Application
-Regression :: RegressionApp -> Application
-BinaryClassification :: Application
-MultiClass :: MultiClassStyle -> NumClasses -> Application
-CrossEntropy :: XEApp -> Application
-
--- | A ranking algorithm
-LambdaRank :: Application
-
--- | Different types of Boosting approaches
-data Booster
-
--- | Gradient Boosting Decision Tree
-GBDT :: Booster
-RandomForest :: Booster
-
--- | Dropouts meet Multiple Additive Regression Trees
-DART :: [DARTParam] -> Booster
-
--- | Gradient-based One-Sided Sampling
-GOSS :: [GOSSParam] -> Booster
-
--- | Parameters exclusively for the DART booster
-data DARTParam
-
--- | Dropout rate
-DropRate :: ProperFraction -> DARTParam
-
--- | Probablility of skipping a drop
-SkipDrop :: ProperFraction -> DARTParam
-
--- | Max number of dropped trees on one iteration
-MaxDrop :: PositiveInt -> DARTParam
-UniformDrop :: Bool -> DARTParam
-XGBoostDARTMode :: Bool -> DARTParam
-DropSeed :: Int -> DARTParam
-data Device
-CPU :: Device
-GPU :: [GPUParam] -> Device
-data Direction
-Increasing :: Direction
-Decreasing :: Direction
-NoConstraint :: Direction
-data GOSSParam
-TopRate :: ProperFraction -> GOSSParam
-OtherRate :: ProperFraction -> GOSSParam
-data GPUParam
-GpuPlatformId :: Natural -> GPUParam
-GpuDeviceId :: Natural -> GPUParam
-GpuUseDP :: Bool -> GPUParam
-type LocalListenPort = Natural
-type MachineListFile = FilePath
-data Metric
-MeanAbsoluteError :: Metric
-MeanSquareError :: Metric
-L2_root :: Metric
-QuantileRegression :: Metric
-MAPELoss :: Metric
-HuberLoss :: Metric
-FairLoss :: Metric
-PoissonNegLogLikelihood :: Metric
-GammaNegLogLikelihood :: Metric
-GammaDeviance :: Metric
-TweedieNegLogLiklihood :: Metric
-NDCG :: (Maybe NDCGEvalPositions) -> Metric
-MAP :: Metric
-AUC :: Metric
-BinaryLogloss :: Metric
-BinaryError :: Metric
-MultiLogloss :: Metric
-MultiError :: Metric
-Xentropy :: Metric
-XentLambda :: Metric
-KullbackLeibler :: Metric
-type Minutes = Natural
-
--- | Multi-classification styles
-data MultiClassStyle
-MultiClassSimple :: MultiClassStyle
-MultiClassOneVsAll :: MultiClassStyle
-type NDCGEvalPositions = [Natural]
-type NumClasses = Natural
-type NumMachines = PositiveInt
-data ParallelismParams
-SocketVer :: NumMachines -> MachineListFile -> LocalListenPort -> Minutes -> ParallelismParams
-[nMachines] :: ParallelismParams -> NumMachines
-[machineList] :: ParallelismParams -> MachineListFile
-[port] :: ParallelismParams -> LocalListenPort
-[timeOut] :: ParallelismParams -> Minutes
-MPIVer :: NumMachines -> ParallelismParams
-[nMachines] :: ParallelismParams -> NumMachines
-data ParallelismStyle
-Serial :: ParallelismStyle
-FeaturePar :: ParallelismParams -> ParallelismStyle
-DataPar :: ParallelismParams -> ParallelismStyle
-VotingPar :: ParallelismParams -> ParallelismStyle
 
 -- | Parameters control the behavior of lightGBM.
 data Param
@@ -412,27 +310,8 @@ Sigmoid :: PositiveDouble -> Param
 -- | Used in Huber loss and Quantile regression
 Alpha :: OpenProperFraction -> Param
 
--- | Used in Fair loss
-FairC :: PositiveDouble -> Param
-
--- | Used in Poisson regression
-PoissonMaxDeltaStep :: PositiveDouble -> Param
-
--- | Used in Binary classification
-ScalePosWeight :: Double -> Param
-
 -- | Used only in RegressionL2 task
 BoostFromAverage :: Bool -> Param
-
--- | Used in Binary classification (set to true if training data are
---   unbalanced)
-IsUnbalance :: Bool -> Param
-
--- | Used in LambdaRank
-MaxPosition :: PositiveInt -> Param
-
--- | Used in LambdaRank
-LabelGain :: [Double] -> Param
 
 -- | Only used in RegressionL2
 RegSqrt :: Bool -> Param
@@ -441,6 +320,120 @@ RegSqrt :: Bool -> Param
 Metric :: [Metric] -> Param
 MetricFreq :: PositiveInt -> Param
 TrainingMetric :: Bool -> Param
+
+-- | LightGBM can be used for a variety of applications
+data Application
+Regression :: RegressionApp -> Application
+BinaryClassification :: [BinaryClassParam] -> Application
+MultiClass :: MultiClassStyle -> NumClasses -> Application
+CrossEntropy :: XEApp -> Application
+
+-- | A ranking algorithm
+LambdaRank :: [LambdaRankParam] -> Application
+data BinaryClassParam
+
+-- | Set to true if training data are unbalanced
+IsUnbalance :: Bool -> BinaryClassParam
+ScalePosWeight :: PositiveDouble -> BinaryClassParam
+
+-- | Different types of Boosting approaches
+data Booster
+
+-- | Gradient Boosting Decision Tree
+GBDT :: Booster
+RandomForest :: Booster
+
+-- | Dropouts meet Multiple Additive Regression Trees
+DART :: [DARTParam] -> Booster
+
+-- | Gradient-based One-Sided Sampling
+GOSS :: [GOSSParam] -> Booster
+
+-- | Parameters exclusively for the DART booster
+data DARTParam
+
+-- | Dropout rate
+DropRate :: ProperFraction -> DARTParam
+
+-- | Probablility of skipping a drop
+SkipDrop :: ProperFraction -> DARTParam
+
+-- | Max number of dropped trees on one iteration
+MaxDrop :: PositiveInt -> DARTParam
+UniformDrop :: Bool -> DARTParam
+XGBoostDARTMode :: Bool -> DARTParam
+DropSeed :: Int -> DARTParam
+data Device
+CPU :: Device
+GPU :: [GPUParam] -> Device
+data Direction
+Increasing :: Direction
+Decreasing :: Direction
+NoConstraint :: Direction
+data FairRegressionParam
+FairC :: PositiveDouble -> FairRegressionParam
+data GOSSParam
+TopRate :: ProperFraction -> GOSSParam
+OtherRate :: ProperFraction -> GOSSParam
+data GPUParam
+GpuPlatformId :: Natural -> GPUParam
+GpuDeviceId :: Natural -> GPUParam
+GpuUseDP :: Bool -> GPUParam
+data LambdaRankParam
+MaxPosition :: PositiveInt -> LambdaRankParam
+
+-- | Used in LambdaRank
+LabelGain :: [Double] -> LambdaRankParam
+type LocalListenPort = Natural
+type MachineListFile = FilePath
+data Metric
+MeanAbsoluteError :: Metric
+MeanSquareError :: Metric
+L2_root :: Metric
+QuantileRegression :: Metric
+MAPELoss :: Metric
+HuberLoss :: Metric
+FairLoss :: Metric
+PoissonNegLogLikelihood :: Metric
+GammaNegLogLikelihood :: Metric
+GammaDeviance :: Metric
+TweedieNegLogLiklihood :: Metric
+NDCG :: (Maybe NDCGEvalPositions) -> Metric
+MAP :: Metric
+AUC :: Metric
+BinaryLogloss :: Metric
+BinaryError :: Metric
+MultiLogloss :: Metric
+MultiError :: Metric
+Xentropy :: Metric
+XentLambda :: Metric
+KullbackLeibler :: Metric
+type Minutes = Natural
+
+-- | Multi-classification styles
+data MultiClassStyle
+MultiClassSimple :: MultiClassStyle
+MultiClassOneVsAll :: MultiClassStyle
+type NDCGEvalPositions = [Natural]
+type NumClasses = Natural
+type NumMachines = PositiveInt
+data ParallelismParams
+SocketVer :: NumMachines -> MachineListFile -> LocalListenPort -> Minutes -> ParallelismParams
+[nMachines] :: ParallelismParams -> NumMachines
+[machineList] :: ParallelismParams -> MachineListFile
+[port] :: ParallelismParams -> LocalListenPort
+[timeOut] :: ParallelismParams -> Minutes
+MPIVer :: NumMachines -> ParallelismParams
+[nMachines] :: ParallelismParams -> NumMachines
+data ParallelismStyle
+Serial :: ParallelismStyle
+FeaturePar :: ParallelismParams -> ParallelismStyle
+DataPar :: ParallelismParams -> ParallelismStyle
+VotingPar :: ParallelismParams -> ParallelismStyle
+
+-- | Parameters for Poisson regression
+data PoissonRegressionParam
+PoissonMaxDeltaStep :: PositiveDouble -> PoissonRegressionParam
 
 -- | Different types of regression metrics
 data RegressionApp
@@ -451,8 +444,8 @@ L1 :: RegressionApp
 -- | RMS errror metric
 L2 :: RegressionApp
 Huber :: RegressionApp
-Fair :: RegressionApp
-Poisson :: RegressionApp
+Fair :: [FairRegressionParam] -> RegressionApp
+Poisson :: [PoissonRegressionParam] -> RegressionApp
 Quantile :: RegressionApp
 MAPE :: RegressionApp
 Gamma :: RegressionApp
@@ -525,6 +518,18 @@ instance GHC.Classes.Eq LightGBM.Parameters.RegressionApp
 instance GHC.Generics.Generic LightGBM.Parameters.TweedieRegressionParam
 instance GHC.Show.Show LightGBM.Parameters.TweedieRegressionParam
 instance GHC.Classes.Eq LightGBM.Parameters.TweedieRegressionParam
+instance GHC.Generics.Generic LightGBM.Parameters.PoissonRegressionParam
+instance GHC.Show.Show LightGBM.Parameters.PoissonRegressionParam
+instance GHC.Classes.Eq LightGBM.Parameters.PoissonRegressionParam
+instance GHC.Generics.Generic LightGBM.Parameters.FairRegressionParam
+instance GHC.Show.Show LightGBM.Parameters.FairRegressionParam
+instance GHC.Classes.Eq LightGBM.Parameters.FairRegressionParam
+instance GHC.Generics.Generic LightGBM.Parameters.BinaryClassParam
+instance GHC.Show.Show LightGBM.Parameters.BinaryClassParam
+instance GHC.Classes.Eq LightGBM.Parameters.BinaryClassParam
+instance GHC.Generics.Generic LightGBM.Parameters.LambdaRankParam
+instance GHC.Show.Show LightGBM.Parameters.LambdaRankParam
+instance GHC.Classes.Eq LightGBM.Parameters.LambdaRankParam
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.Booster
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.GOSSParam
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.DARTParam
@@ -540,6 +545,10 @@ instance Data.Hashable.Class.Hashable LightGBM.Parameters.XEApp
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.MultiClassStyle
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.RegressionApp
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.TweedieRegressionParam
+instance Data.Hashable.Class.Hashable LightGBM.Parameters.PoissonRegressionParam
+instance Data.Hashable.Class.Hashable LightGBM.Parameters.FairRegressionParam
+instance Data.Hashable.Class.Hashable LightGBM.Parameters.BinaryClassParam
+instance Data.Hashable.Class.Hashable LightGBM.Parameters.LambdaRankParam
 
 module LightGBM.Internal.CommandLineWrapper
 
@@ -608,13 +617,15 @@ instance GHC.Classes.Eq LightGBM.Model.Model
 --                        , P.IsSparse True
 --                        ]
 --   
---   model &lt;- trainNewModel modelFile trainingParams trainingData validationData 100
---   
---   let newData = readCsvFile (HasHeader False) "/path/to/inputs_for_prediction"
---       outputFile = "/path/to/prediction_outputs"
---   predict model newData &gt;&gt;= writeCsvFile outputFile
+--   modelOut &lt;- trainNewModel trainingParams trainingData validationData
+--   case modelOut of
+--       Left err -&gt; ... -- handle the errors
+--       Right model -&gt; do
+--           let newData = readCsvFile (HasHeader False) "/path/to/inputs_for_prediction"
+--               outputFile = "/path/to/prediction_outputs"
+--           predOut &lt;- predict model [] newData
+--           case predOut of
+--               Left err -&gt; ... -- handle the errors
+--               Right preds -&gt; writeCsvFile outputFile preds
 --   </pre>
---   
---   Note that in current versions of LightGBM, categorical features must
---   be encoded as <a>Int</a>s.
 module LightGBM
