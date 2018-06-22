@@ -15,7 +15,7 @@
 </span><a name="line-15"></a><span class="hs-comment">-- &gt;</span><span>
 </span><a name="line-16"></a><span class="hs-comment">-- &gt;  [...]</span><span>
 </span><a name="line-17"></a><span class="hs-comment">-- &gt;</span><span>
-</span><a name="line-18"></a><span class="hs-comment">-- &gt;  import           LightGBM ( writeCsvFile</span><span>
+</span><a name="line-18"></a><span class="hs-comment">-- &gt;  import           LightGBM ( toCSV</span><span>
 </span><a name="line-19"></a><span class="hs-comment">-- &gt;                            , readCsvFile</span><span>
 </span><a name="line-20"></a><span class="hs-comment">-- &gt;                            , HasHeader(..)</span><span>
 </span><a name="line-21"></a><span class="hs-comment">-- &gt;                            , trainNewModel)</span><span>
@@ -47,7 +47,7 @@
 </span><a name="line-47"></a><span class="hs-comment">-- &gt;          predOut &lt;- predict model [] newData</span><span>
 </span><a name="line-48"></a><span class="hs-comment">-- &gt;          case predOut of</span><span>
 </span><a name="line-49"></a><span class="hs-comment">-- &gt;              Left err -&gt; ... -- handle the errors</span><span>
-</span><a name="line-50"></a><span class="hs-comment">-- &gt;              Right preds -&gt; writeCsvFile outputFile preds</span><span>
+</span><a name="line-50"></a><span class="hs-comment">-- &gt;              Right preds -&gt; toCSV outputFile preds</span><span>
 </span><a name="line-51"></a><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span>
 </span><a name="line-52"></a><span>  </span><span class="hs-special">(</span><span> </span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">DataSet</span><span>
 </span><a name="line-53"></a><span>  </span><span class="hs-special">,</span><span> </span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">LightGBM</span><span class="hs-operator">.</span><span class="hs-identifier">Model</span><span>

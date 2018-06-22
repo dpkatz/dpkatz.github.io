@@ -10,7 +10,7 @@ window.onload = function () {pageLoad();};
 
  [...]
 
- import           LightGBM ( writeCsvFile
+ import           LightGBM ( toCSV
                            , readCsvFile
                            , HasHeader(..)
                            , trainNewModel)
@@ -42,4 +42,4 @@ window.onload = function () {pageLoad();};
          predOut &lt;- predict model [] newData
          case predOut of
              Left err -&gt; ... -- handle the errors
-             Right preds -&gt; writeCsvFile outputFile preds</pre></div></div><div id="interface"><h1>Documentation</h1><div class="top"><p class="src">module <a href="LightGBM-DataSet.html">LightGBM.DataSet</a></p></div><div class="top"><p class="src">module <a href="LightGBM-Model.html">LightGBM.Model</a></p></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.18.1</p></div></body></html>
+             Right preds -&gt; toCSV outputFile preds</pre></div></div><div id="interface"><h1>Documentation</h1><div class="top"><p class="src">module <a href="LightGBM-DataSet.html">LightGBM.DataSet</a></p></div><div class="top"><p class="src">module <a href="LightGBM-Model.html">LightGBM.Model</a></p></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.18.1</p></div></body></html>
