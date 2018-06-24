@@ -330,33 +330,18 @@ SaveBinary :: Bool -> Param
 Verbosity :: VerbosityLevel -> Param
 
 -- | Which column has the labels
-LabelColumn :: ColumnSelector -> Param
+LabelColumn :: (ColumnSelector Natural) -> Param
 
 -- | Which column has the weights
-WeightColumn :: ColumnSelector -> Param
-QueryColumn :: ColumnSelector -> Param
+WeightColumn :: (ColumnSelector Natural) -> Param
+QueryColumn :: (ColumnSelector Natural) -> Param
 
 -- | Select columns to ignore in training
-IgnoreColumns :: [ColumnSelector] -> Param
+IgnoreColumns :: [(ColumnSelector Natural)] -> Param
 
 -- | Select columns to use as features
-CategoricalFeatures :: [ColumnSelector] -> Param
-
--- | Prediction Only; true = raw scores only, false = transformed scores
-PredictRawScore :: Bool -> Param
-
--- | Prediction Only
-PredictLeafIndex :: Bool -> Param
-
--- | Prediction Only
-PredictContrib :: Bool -> Param
+CategoricalFeatures :: [(ColumnSelector Int32)] -> Param
 BinConstructSampleCount :: PositiveInt -> Param
-
--- | Prediction Only; how many trained predictions
-NumIterationsPredict :: Natural -> Param
-PredEarlyStop :: Bool -> Param
-PredEarlyStopFreq :: Natural -> Param
-PredEarlyStopMargin :: Double -> Param
 UseMissing :: Bool -> Param
 ZeroAsMissing :: Bool -> Param
 InitScoreFile :: FilePath -> Param
@@ -379,6 +364,24 @@ RegSqrt :: Bool -> Param
 Metric :: [Metric] -> Param
 MetricFreq :: PositiveInt -> Param
 TrainingMetric :: Bool -> Param
+data PredictionParam
+
+-- | True = raw scores only, False = transformed scores
+PredictRawScore :: Bool -> PredictionParam
+
+-- | True = predict with leaf index
+PredictLeafIndex :: Bool -> PredictionParam
+
+-- | True = estimate how each feature contributes to the prediction
+PredictContrib :: Bool -> PredictionParam
+
+-- | how many trained iterations are used in prediction
+NumIterationsPredict :: Natural -> PredictionParam
+
+-- | True = use early stopping on the prediction (may degrade accuracy)
+PredEarlyStop :: Bool -> PredictionParam
+PredEarlyStopFreq :: Natural -> PredictionParam
+PredEarlyStopMargin :: Double -> PredictionParam
 
 -- | LightGBM can be used for a variety of applications
 data Application
@@ -524,14 +527,14 @@ XEntropyLambda :: XEApp
 
 -- | Some parameters are based on column selection either by index or by
 --   name. A <a>ColumnSelector</a> encapsulates this flexibility.
-data ColumnSelector
-Index :: Natural -> ColumnSelector
-ColName :: String -> ColumnSelector
-colSelArgument :: ColumnSelector -> String
+data ColumnSelector a
+Index :: a -> ColumnSelector a
+ColName :: String -> ColumnSelector a
+colSelArgument :: Show a => ColumnSelector a -> String
 instance GHC.Show.Show LightGBM.Parameters.Param
 instance GHC.Classes.Eq LightGBM.Parameters.Param
-instance GHC.Show.Show LightGBM.Parameters.ColumnSelector
-instance GHC.Classes.Eq LightGBM.Parameters.ColumnSelector
+instance GHC.Show.Show a => GHC.Show.Show (LightGBM.Parameters.ColumnSelector a)
+instance GHC.Classes.Eq a => GHC.Classes.Eq (LightGBM.Parameters.ColumnSelector a)
 instance GHC.Generics.Generic LightGBM.Parameters.Booster
 instance GHC.Show.Show LightGBM.Parameters.Booster
 instance GHC.Classes.Eq LightGBM.Parameters.Booster
@@ -589,6 +592,8 @@ instance GHC.Classes.Eq LightGBM.Parameters.BinaryClassParam
 instance GHC.Generics.Generic LightGBM.Parameters.LambdaRankParam
 instance GHC.Show.Show LightGBM.Parameters.LambdaRankParam
 instance GHC.Classes.Eq LightGBM.Parameters.LambdaRankParam
+instance GHC.Show.Show LightGBM.Parameters.PredictionParam
+instance GHC.Classes.Eq LightGBM.Parameters.PredictionParam
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.Booster
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.GOSSParam
 instance Data.Hashable.Class.Hashable LightGBM.Parameters.DARTParam
@@ -612,7 +617,7 @@ instance Data.Hashable.Class.Hashable LightGBM.Parameters.LambdaRankParam
 module LightGBM.Internal.CommandLineWrapper
 
 -- | Run the LightGBM executable with appropriate parameters
-run :: FilePath -> [Param] -> [CommandLineParam] -> IO (Either ErrLog OutLog)
+run :: FilePath -> [Param] -> [PredictionParam] -> [CommandLineParam] -> IO (Either ErrLog OutLog)
 
 module LightGBM.Model
 
@@ -630,7 +635,7 @@ writeModelFile :: FilePath -> Model -> IO ()
 
 -- | Predict the results of new inputs and persist the results to an output
 --   file.
-predict :: Model -> [Param] -> DataSet -> IO (Either ErrLog DataSet)
+predict :: Model -> [Param] -> [PredictionParam] -> DataSet -> IO (Either ErrLog DataSet)
 instance GHC.Show.Show LightGBM.Model.Model
 instance GHC.Classes.Eq LightGBM.Model.Model
 
